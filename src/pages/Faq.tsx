@@ -4,7 +4,7 @@ import { FAQS } from '../lib/content';
 export default function Faq() {
   const [open, setOpen] = useState(0);
   return (
-    <div className="narrow" style={{ padding: '70px 32px 90px' }}>
+    <div className="narrow" style={{ paddingTop: 70, paddingBottom: 90 }}>
       <span className="eyebrow">FAQ</span>
       <h1 className="h1" style={{ margin: '14px 0 0' }}>Questions we get every week.</h1>
       <div style={{ display: 'flex', flexDirection: 'column', marginTop: 40, borderTop: '1px solid rgba(20,55,94,.12)' }}>

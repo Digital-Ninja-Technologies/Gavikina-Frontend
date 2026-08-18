@@ -32,7 +32,7 @@ export default function About() {
             ))}
           </div>
         </div>
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', borderRadius: 20, overflow: 'hidden', background: '#F2EDE3' }}>
+        <div className="media-portrait">
           <ImageSlot
             src="https://images.unsplash.com/photo-1660330589257-813305a4a383?fm=jpg&q=70&w=1400&fit=crop&auto=format"
             placeholder="Team or install photo"

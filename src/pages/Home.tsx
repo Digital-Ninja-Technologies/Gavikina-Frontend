@@ -60,15 +60,8 @@ export default function Home() {
           }}
         />
         <div
-          className="container"
-          style={{
-            position: 'relative',
-            padding: '88px 32px 96px',
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0,1.05fr) minmax(0,.85fr)',
-            gap: 60,
-            alignItems: 'center',
-          }}
+          className="container hero-grid"
+          style={{ position: 'relative', paddingTop: 88, paddingBottom: 96 }}
         >
           <div>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 11.5, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase', color: '#F5A623' }}>
@@ -114,7 +107,7 @@ export default function Home() {
       </section>
 
       {/* VALUE PROPS */}
-      <section className="container" style={{ padding: '80px 32px 20px' }}>
+      <section className="container" style={{ paddingTop: 80, paddingBottom: 20 }}>
         <div className="grid grid-3">
           {VALUE_PROPS.map((v, i) => (
             <Reveal key={v.title} delay={i * 60}>
@@ -144,7 +137,7 @@ export default function Home() {
       </section>
 
       {/* TIERS */}
-      <section className="container" style={{ padding: '82px 32px 0' }}>
+      <section className="container" style={{ paddingTop: 82 }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 30, flexWrap: 'wrap', marginBottom: 32 }}>
           <div>
             <span className="eyebrow">System tiers</span>
@@ -171,7 +164,7 @@ export default function Home() {
       </section>
 
       {/* RECENT PROJECTS */}
-      <section className="container" style={{ padding: '82px 32px 0' }}>
+      <section className="container" style={{ paddingTop: 82 }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 30, flexWrap: 'wrap', marginBottom: 30 }}>
           <h2 className="h2">Recently commissioned</h2>
           <button type="button" className="btn btn-outline btn-md" onClick={() => navigate('/projects')}>
@@ -197,7 +190,7 @@ export default function Home() {
       </section>
 
       {/* PROCESS */}
-      <section className="container" style={{ padding: '82px 32px 0' }}>
+      <section className="container" style={{ paddingTop: 82 }}>
         <h2 className="h2" style={{ marginBottom: 34 }}>From first call to power on</h2>
         <div className="grid grid-4" style={{ gap: 0, borderTop: '1px solid rgba(20,55,94,.12)' }}>
           {STEPS_SHORT.map((s) => (
@@ -216,7 +209,7 @@ export default function Home() {
       {/* CTA */}
       <section style={{ margin: '90px 0 0', background: '#14375E', color: '#fff', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', bottom: -160, left: '40%', width: 440, height: 440, borderRadius: '50%', background: 'radial-gradient(circle at 40% 35%,rgba(46,158,69,.4),rgba(46,158,69,0) 68%)' }} />
-        <div className="container" style={{ position: 'relative', padding: '76px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 44, flexWrap: 'wrap' }}>
+        <div className="container" style={{ position: 'relative', paddingTop: 76, paddingBottom: 76, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 44, flexWrap: 'wrap' }}>
           <div>
             <h2 style={{ margin: 0, fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 600, letterSpacing: '-.032em', maxWidth: '22ch', lineHeight: 1.12 }}>
               Ready for the number that comes with a plan?

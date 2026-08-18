@@ -271,6 +271,28 @@ h1, h2, h3 {
   .split, .split-rev { grid-template-columns: 1fr; gap: 32px; }
 }
 
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0,1.05fr) minmax(0,.85fr);
+  gap: 60px;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
+.media-portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #F2EDE3;
+}
+@media (max-width: 900px) {
+  .media-portrait { aspect-ratio: 16/10; }
+}
+
 .card {
   border-radius: 16px;
   border: 1px solid var(--border);

@@ -54,7 +54,7 @@ export default function Catalogue() {
         ))}
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,.9fr)', marginTop: 56 }}>
+      <div className="split" style={{ marginTop: 56 }}>
         <div style={{ padding: '34px 36px', borderRadius: 20, background: '#F2EDE3' }}>
           <h2 style={{ fontSize: 25 }}>In every system, at every size</h2>
           <p style={{ margin: '10px 0 0', fontSize: 14, lineHeight: 1.65, color: 'rgba(20,55,94,.62)' }}>

@@ -17,7 +17,7 @@ export default function Contact() {
     <div className="page-hero">
       <span className="eyebrow">Contact</span>
       <h1 className="h1" style={{ margin: '14px 0 0' }}>Talk to an engineer.</h1>
-      <div className="split" style={{ gridTemplateColumns: 'minmax(0,.95fr) minmax(0,1.05fr)', marginTop: 44 }}>
+      <div className="split" style={{ marginTop: 44 }}>
         <div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {CONTACT_METHODS.map((c) => (
