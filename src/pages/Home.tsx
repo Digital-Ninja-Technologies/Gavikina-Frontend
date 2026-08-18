@@ -73,7 +73,7 @@ export default function Home() {
               We design, install and maintain solar systems sized to what you actually run. Size yours in ninety seconds — no contact details
               required.
             </p>
-            <div style={{ display: 'flex', gap: 12, marginTop: 34, flexWrap: 'wrap' }}>
+            <div className="hero-cta">
               <button type="button" className="btn btn-primary btn-lg" onClick={openCalc}>
                 Size my system
               </button>
