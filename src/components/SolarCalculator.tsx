@@ -134,12 +134,12 @@ export default function SolarCalculator({ onAssessment }: SolarCalculatorProps) 
               This is a quick estimate. The full assessment factors in your backup hours and current fuel spend, then gives you a
               personalised recommendation and a site inspection.
             </p>
-            <button type="button" className="btn btn-primary" style={{ width: '100%' }} onClick={() => onAssessment && onAssessment(sel)}>
+            <button type="button" className="btn btn-primary btn-md" style={{ width: '100%' }} onClick={() => onAssessment && onAssessment(sel)}>
               Take the full assessment →
             </button>
             <button
               type="button"
-              className="btn"
+              className="btn btn-md"
               style={{ width: '100%', marginTop: 8, border: '1px solid rgba(255,255,255,.18)', background: 'none', color: 'rgba(255,255,255,.7)', fontWeight: 500, fontSize: 13 }}
               onClick={() => setSel({})}
             >
