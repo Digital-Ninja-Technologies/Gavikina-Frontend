@@ -15,7 +15,7 @@ const config = defineConfig({
       preset: 'vercel',
       rollupConfig: { external: [/^@sentry\//] },
       routeRules: {
-        '/dashboard/**': { proxy: 'https://gavikina-dashboard.vercel.app/dashboard/**' },
+        '/dashboard/**': { proxy: 'https://gavikina-admin.vercel.app/dashboard/**' },
       },
     }),
     tailwindcss(),
