@@ -116,17 +116,34 @@ export const CATEGORIES = [...new Set(APPLIANCES.map((a) => a.category))];
 export const fmt = (n: number) => '₦' + Math.round(n).toLocaleString('en-NG');
 export const fmtRange = (t: Tier) => `${fmt(t.price_range_min)} – ${fmt(t.price_range_max)}`;
 
-export function watts(selection: Selection): number {
-  return APPLIANCES.reduce((sum, a) => sum + (selection[a.id] || 0) * a.typical_wattage, 0);
+export interface CalculatorFormula {
+  // Safety margin applied on top of measured peak load, e.g. 1.3 = 30% headroom.
+  headroom: number;
+  // Inverter power factor used to convert watts to kVA.
+  powerFactor: number;
+  // Extra capacity required when 12h+ backup is requested, e.g. 1.15 = 15% more.
+  longBackupBoost: number;
 }
 
-// Peak load + 30% headroom, converted at 0.8 power factor.
-export function size(selection: Selection, backupHours?: number) {
-  const w = watts(selection);
-  const requiredKva = w === 0 ? 0 : (w * 1.3) / 0.8 / 1000;
+export const DEFAULT_FORMULA: CalculatorFormula = { headroom: 1.3, powerFactor: 0.8, longBackupBoost: 1.15 };
+
+export function watts(selection: Selection, appliances: Appliance[] = APPLIANCES): number {
+  return appliances.reduce((sum, a) => sum + (selection[a.id] || 0) * a.typical_wattage, 0);
+}
+
+// Peak load + headroom, converted at the configured power factor.
+export function size(
+  selection: Selection,
+  backupHours?: number,
+  appliances: Appliance[] = APPLIANCES,
+  tiers: Tier[] = TIERS,
+  formula: CalculatorFormula = DEFAULT_FORMULA
+) {
+  const w = watts(selection, appliances);
+  const requiredKva = w === 0 ? 0 : (w * formula.headroom) / formula.powerFactor / 1000;
   const long = !!backupHours && backupHours >= 12;
-  const target = long ? requiredKva * 1.15 : requiredKva;
-  const tier = TIERS.find((t) => t.size_kva >= target) || TIERS[TIERS.length - 1];
+  const target = long ? requiredKva * formula.longBackupBoost : requiredKva;
+  const tier = tiers.find((t) => t.size_kva >= target) || tiers[tiers.length - 1];
   return { watts: w, requiredKva, tier: w === 0 ? null : tier };
 }
 

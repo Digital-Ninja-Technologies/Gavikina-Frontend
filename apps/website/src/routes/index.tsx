@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { fmtRange, SEED_PROJECTS, TIERS } from '@gavikina/engine';
+import { fmtRange, SEED_PROJECTS, useCalculatorTiers } from '@gavikina/engine';
 import { Button, cn } from '@gavikina/ui';
 import ImageSlot from '../components/ImageSlot';
 import Reveal from '../components/Reveal';
@@ -33,6 +33,7 @@ const KEN_DELAY = ['0s', '-24s', '-16s', '-8s'];
 
 function Home() {
   const homeProjects = SEED_PROJECTS.slice(0, 3);
+  const tiers = useCalculatorTiers();
 
   return (
     <div>
@@ -138,7 +139,7 @@ function Home() {
           </Button>
         </div>
         <div className="grid grid-cols-5 gap-3.5 max-[980px]:grid-cols-2 max-[640px]:grid-cols-1">
-          {TIERS.map((t, i) => (
+          {tiers.map((t, i) => (
             <Reveal key={t.id} delay={i * 50}>
               <div className="flex flex-col gap-3 rounded-2xl border border-navy/10 bg-white p-5.5 pb-6">
                 <span className="text-[26px] font-semibold tracking-tight">{t.name}</span>

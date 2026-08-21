@@ -85,6 +85,11 @@ export default function Sidebar({ navOpen, onClose }: SidebarProps) {
           Past Projects
           <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] tabular-nums text-white/70">{counts.projects}</span>
         </Link>
+
+        <span className="mb-1 mt-4 text-[11px] font-semibold uppercase tracking-widest text-white/40">Tools</span>
+        <Link to="/calculator-settings" className={navBtnClass(pathname === '/calculator-settings')}>
+          Calculator settings
+        </Link>
       </div>
 
       <div className="mt-auto flex flex-col gap-1 border-t border-white/10 pt-5">

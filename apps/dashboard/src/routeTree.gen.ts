@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CalculatorSettingsRouteImport } from './routes/calculator-settings'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as EnquiriesViewRouteImport } from './routes/enquiries.$view'
 import { Route as EnquiriesViewIndexRouteImport } from './routes/enquiries.$view.index'
@@ -18,6 +19,11 @@ import { Route as EnquiriesViewIdRouteImport } from './routes/enquiries.$view.$i
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalculatorSettingsRoute = CalculatorSettingsRouteImport.update({
+  id: '/calculator-settings',
+  path: '/calculator-settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsRoute = ProjectsRouteImport.update({
@@ -43,6 +49,7 @@ const EnquiriesViewIdRoute = EnquiriesViewIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/calculator-settings': typeof CalculatorSettingsRoute
   '/projects': typeof ProjectsRoute
   '/enquiries/$view': typeof EnquiriesViewRouteWithChildren
   '/enquiries/$view/$id': typeof EnquiriesViewIdRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/calculator-settings': typeof CalculatorSettingsRoute
   '/projects': typeof ProjectsRoute
   '/enquiries/$view/$id': typeof EnquiriesViewIdRoute
   '/enquiries/$view': typeof EnquiriesViewIndexRoute
@@ -57,6 +65,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/calculator-settings': typeof CalculatorSettingsRoute
   '/projects': typeof ProjectsRoute
   '/enquiries/$view': typeof EnquiriesViewRouteWithChildren
   '/enquiries/$view/$id': typeof EnquiriesViewIdRoute
@@ -66,15 +75,22 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/calculator-settings'
     | '/projects'
     | '/enquiries/$view'
     | '/enquiries/$view/$id'
     | '/enquiries/$view/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/projects' | '/enquiries/$view/$id' | '/enquiries/$view'
+  to:
+    | '/'
+    | '/calculator-settings'
+    | '/projects'
+    | '/enquiries/$view/$id'
+    | '/enquiries/$view'
   id:
     | '__root__'
     | '/'
+    | '/calculator-settings'
     | '/projects'
     | '/enquiries/$view'
     | '/enquiries/$view/$id'
@@ -83,6 +99,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CalculatorSettingsRoute: typeof CalculatorSettingsRoute
   ProjectsRoute: typeof ProjectsRoute
   EnquiriesViewRoute: typeof EnquiriesViewRouteWithChildren
 }
@@ -94,6 +111,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculator-settings': {
+      id: '/calculator-settings'
+      path: '/calculator-settings'
+      fullPath: '/calculator-settings'
+      preLoaderRoute: typeof CalculatorSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects': {
@@ -143,6 +167,7 @@ const EnquiriesViewRouteWithChildren = EnquiriesViewRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CalculatorSettingsRoute: CalculatorSettingsRoute,
   ProjectsRoute: ProjectsRoute,
   EnquiriesViewRoute: EnquiriesViewRouteWithChildren,
 }

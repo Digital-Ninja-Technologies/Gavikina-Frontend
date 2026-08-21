@@ -3,14 +3,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import {
-  APPLIANCES,
   BACKUP_OPTIONS,
   PAYMENT_METHODS,
   REASONS,
+  effectiveSize,
   fmt,
   fuelCompare,
-  size
-  
+  useCalculatorAppliances
 } from '@gavikina/engine';
 import type {Selection} from '@gavikina/engine';
 import { assessmentContactSchema  } from '@gavikina/schemas';
@@ -53,6 +52,7 @@ export default function FullAssessment({ initialSelection }: FullAssessmentProps
   const [typing, setTyping] = useState(false);
   const [done, setDone] = useState(false);
   const [ref, setRef] = useState('');
+  const appliances = useCalculatorAppliances();
   const typeRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const contactForm = useForm<AssessmentContactValues>({
@@ -119,7 +119,7 @@ export default function FullAssessment({ initialSelection }: FullAssessmentProps
   const backupLabel = () => BACKUP_OPTIONS.find((b) => b.id === backup)?.label ?? '8 hours';
 
   const aiNote = () => {
-    const r = size(sel, backupHours());
+    const r = effectiveSize(sel, backupHours());
     if (!r.tier) return 'Add a few appliances and we will explain what your system does for you.';
     const c = fuelCompare(fuel, r.tier);
     const reasonLabel = REASONS.find((x) => x.id === reason)?.label || '';
@@ -173,16 +173,16 @@ export default function FullAssessment({ initialSelection }: FullAssessmentProps
   };
 
   const hours = backupHours();
-  const result = useMemo(() => size(sel, hours), [sel, hours]);
+  const result = useMemo(() => effectiveSize(sel, hours), [sel, hours]);
   const compare = useMemo(() => fuelCompare(fuel, result.tier), [fuel, result.tier]);
   const effectiveStep = done ? 8 : step;
   const nextEnabled = canAdvance();
   const lastStep = step === 7;
 
   const groups = useMemo(() => {
-    const cats = [...new Set(APPLIANCES.map((a) => a.category))].filter((cat) => property === 'business' || cat !== 'Business');
-    return cats.map((cat) => ({ name: cat, items: APPLIANCES.filter((a) => a.category === cat) }));
-  }, [property]);
+    const cats = [...new Set(appliances.map((a) => a.category))].filter((cat) => property === 'business' || cat !== 'Business');
+    return cats.map((cat) => ({ name: cat, items: appliances.filter((a) => a.category === cat) }));
+  }, [property, appliances]);
 
   const compareRows = compare
     ? [

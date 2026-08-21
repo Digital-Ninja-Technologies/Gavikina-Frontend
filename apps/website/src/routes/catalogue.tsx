@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { fmtRange, INCLUDED, TIERS } from '@gavikina/engine';
+import { fmtRange, INCLUDED, useCalculatorTiers } from '@gavikina/engine';
 import { Button } from '@gavikina/ui';
 import { openCalc, openAssess } from '../store/modal';
 
@@ -15,6 +15,7 @@ const COMPONENTS = [
 const ADDONS = ['Additional battery module', 'Extra panel string', 'Monitoring gateway', 'Automatic changeover', 'Panel cleaning visit', 'Extended maintenance plan'];
 
 function Catalogue() {
+  const tiers = useCalculatorTiers();
   return (
     <div className="mx-auto max-w-[1260px] px-8 pb-22.5 pt-17.5 max-[640px]:px-5">
       <span className="text-[11.5px] font-semibold uppercase tracking-widest text-green">Product catalogue</span>
@@ -27,7 +28,7 @@ function Catalogue() {
       </p>
 
       <div className="mt-10 flex flex-col gap-3.5">
-        {TIERS.map((t) => (
+        {tiers.map((t) => (
           <div
             key={t.id}
             className="grid grid-cols-[150px_minmax(0,1fr)_220px_180px] items-center gap-7 rounded-2xl border border-navy/11 bg-white p-6.5 px-7 transition-colors hover:border-green/45 hover:bg-[#fdfdfb] max-[900px]:grid-cols-2 max-[900px]:gap-y-4.5 max-[560px]:grid-cols-1"

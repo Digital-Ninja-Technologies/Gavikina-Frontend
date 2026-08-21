@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { APPLIANCES, CATEGORIES, fmtRange, size  } from '@gavikina/engine';
+import { CATEGORIES, effectiveSize, fmtRange, useCalculatorAppliances } from '@gavikina/engine';
 import type {Selection} from '@gavikina/engine';
 import { Button, cn } from '@gavikina/ui';
 
@@ -21,12 +21,13 @@ export default function SolarCalculator({ onAssessment }: SolarCalculatorProps) 
     });
   };
 
+  const appliances = useCalculatorAppliances();
   const groups = useMemo(
-    () => CATEGORIES.map((cat) => ({ name: cat, items: APPLIANCES.filter((a) => a.category === cat) })),
-    []
+    () => CATEGORIES.map((cat) => ({ name: cat, items: appliances.filter((a) => a.category === cat) })),
+    [appliances]
   );
 
-  const result = useMemo(() => size(sel), [sel]);
+  const result = useMemo(() => effectiveSize(sel), [sel]);
   const hasSelection = !!result.tier;
 
   return (
