@@ -54,7 +54,9 @@ export default function Sidebar({ navOpen, onClose }: SidebarProps) {
       )}
     >
       <div className="flex items-center justify-between">
-        <img src={`${import.meta.env.BASE_URL}logo-primary-ondark.svg`} alt="Gavikina Energy" className="m-1.5 block h-10 w-auto" />
+        <Link to="/" className="m-1.5 block">
+          <img src={`${import.meta.env.BASE_URL}logo-primary-ondark.svg`} alt="Gavikina Energy" className="block h-10 w-auto" />
+        </Link>
         <button
           type="button"
           onClick={onClose}
