@@ -1,0 +1,40 @@
+/* Shared Gavikina Energy design tokens — imported by both apps so the
+   marketing site and the admin dashboard render the same brand. */
+@theme {
+  --font-sans: 'Poppins', system-ui, sans-serif;
+
+  --color-navy: #14375e;
+  --color-ink: #101328;
+  --color-green: #2e9e45;
+  --color-green-dark: #14602a;
+  --color-green-light: #8fe0a2;
+  --color-amber: #f5a623;
+  --color-amber-light: #fbc14a;
+  --color-cream: #f2ede3;
+
+  --animate-gv-in: gvIn 0.16s ease both;
+  --animate-gv-modal: gvModal 0.24s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  --animate-gv-rise: gvRise 0.62s cubic-bezier(0.22, 0.72, 0.24, 1) both;
+  --animate-gv-fade: gvFade 0.3s ease both;
+  --animate-gv-caret: gvCaret 1s step-end infinite;
+}
+
+@keyframes gvIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes gvModal {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes gvRise {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes gvFade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes gvCaret {
+  50% { opacity: 0; }
+}
