@@ -1,29 +1,31 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SIZE_TIERS  } from '@gavikina/engine';
+import { useCalculatorTiers } from '@gavikina/engine';
 import type {Project} from '@gavikina/engine';
 import { projectDraftSchema  } from '@gavikina/schemas';
 import type {ProjectDraftValues} from '@gavikina/schemas';
 import { Field, Input, Textarea, cn } from '@gavikina/ui';
 import { deleteProject, saveProject, useProjects } from '../store/projects';
 
-function emptyDraft(): ProjectDraftValues {
-  return { title: '', location: '', size: SIZE_TIERS[2], category: 'home', caseStudy: false, images: 0, body: '' };
+function emptyDraft(defaultSize: string): ProjectDraftValues {
+  return { title: '', location: '', size: defaultSize, category: 'home', caseStudy: false, images: 0, body: '' };
 }
 
 export default function ProjectsManager() {
   const projects = useProjects();
+  const tiers = useCalculatorTiers();
+  const sizeNames = tiers.map((t) => t.name);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   const form = useForm<ProjectDraftValues>({
     resolver: zodResolver(projectDraftSchema),
-    defaultValues: emptyDraft(),
+    defaultValues: emptyDraft(sizeNames[0] || ''),
   });
 
   const startNew = () => {
-    form.reset(emptyDraft());
+    form.reset(emptyDraft(sizeNames[0] || ''));
     setEditingId(null);
     setOpen(true);
   };
@@ -98,7 +100,7 @@ export default function ProjectsManager() {
               <div className="grid grid-cols-2 gap-3">
                 <Field label="System size">
                   <select {...form.register('size')} className="w-full rounded-[11px] border border-navy/18 bg-white px-3.5 py-3 text-sm text-navy">
-                    {SIZE_TIERS.map((o) => (
+                    {sizeNames.map((o) => (
                       <option key={o} value={o}>
                         {o}
                       </option>

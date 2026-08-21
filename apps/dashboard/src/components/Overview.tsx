@@ -1,10 +1,13 @@
 import { useMemo } from 'react';
-import { SIZE_TIERS } from '@gavikina/engine';
+import { useCalculatorTiers } from '@gavikina/engine';
 import { LEADS, ts } from '../lib/data';
 
 const TYPE_COLOR: Record<string, string> = { Customer: '#2E9E45', Agent: '#F5A623', Investor: '#14375E', Career: '#5A3E9B', Contact: 'rgba(20,55,94,.35)' };
 
 export default function Overview() {
+  const tiers = useCalculatorTiers();
+  const sizeNames = useMemo(() => tiers.map((t) => t.name), [tiers]);
+
   const stats = useMemo(() => {
     const customers = LEADS.filter((l) => l.type === 'Customer');
     const done = customers.filter((l) => l.completed);
@@ -43,10 +46,10 @@ export default function Overview() {
   }, []);
 
   const sizeRows = useMemo(() => {
-    const counts = SIZE_TIERS.map((n) => LEADS.filter((l) => l.size === n).length);
+    const counts = sizeNames.map((n) => LEADS.filter((l) => l.size === n).length);
     const max = Math.max(1, ...counts);
-    return SIZE_TIERS.map((n, i) => ({ size: n, count: counts[i], max }));
-  }, []);
+    return sizeNames.map((n, i) => ({ size: n, count: counts[i], max }));
+  }, [sizeNames]);
 
   return (
     <div className="animate-gv-fade">

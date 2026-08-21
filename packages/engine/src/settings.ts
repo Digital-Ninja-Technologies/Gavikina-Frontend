@@ -13,15 +13,13 @@ export interface ApplianceOverride {
   default_quantity: number;
 }
 
-export interface TierOverride {
-  price_range_min: number;
-  price_range_max: number;
-}
-
 export interface CalculatorSettings {
   formula: CalculatorFormula;
   appliances: Record<string, ApplianceOverride>;
-  tiers: Record<string, TierOverride>;
+  // The full tier list — unlike appliances, admins can add and remove tiers,
+  // not just tune existing ones, so this is stored as a plain list rather
+  // than a fixed-id override map.
+  tiers: Tier[];
 }
 
 const STORAGE_KEY = 'gv-calculator-settings-v1';
@@ -32,7 +30,7 @@ export function defaultCalculatorSettings(): CalculatorSettings {
     appliances: Object.fromEntries(
       APPLIANCES.map((a) => [a.id, { typical_wattage: a.typical_wattage, default_quantity: a.default_quantity }])
     ),
-    tiers: Object.fromEntries(TIERS.map((t) => [t.id, { price_range_min: t.price_range_min, price_range_max: t.price_range_max }])),
+    tiers: TIERS.map((t) => ({ ...t })),
   };
 }
 
@@ -55,7 +53,7 @@ export function loadCalculatorSettings(): CalculatorSettings {
     appliances: Object.fromEntries(
       APPLIANCES.map((a) => [a.id, { ...defaults.appliances[a.id], ...stored.appliances?.[a.id] }])
     ),
-    tiers: Object.fromEntries(TIERS.map((t) => [t.id, { ...defaults.tiers[t.id], ...stored.tiers?.[t.id] }])),
+    tiers: Array.isArray(stored.tiers) && stored.tiers.length > 0 ? stored.tiers : defaults.tiers,
   };
 }
 
@@ -66,6 +64,18 @@ export function saveCalculatorSettings(settings: CalculatorSettings) {
   } catch {
     /* storage unavailable */
   }
+}
+
+export function newTier(): Tier {
+  return {
+    id: 't' + Date.now(),
+    name: '',
+    size_kva: 0,
+    price_range_min: 0,
+    price_range_max: 0,
+    typically_powers: [],
+    notes: '',
+  };
 }
 
 export function resetCalculatorSettings() {
@@ -83,8 +93,10 @@ export function getEffectiveAppliances(): Appliance[] {
 }
 
 export function getEffectiveTiers(): Tier[] {
-  const settings = loadCalculatorSettings();
-  return TIERS.map((t) => ({ ...t, ...settings.tiers[t.id] }));
+  // Sorted ascending by size — size() picks the first tier whose size_kva
+  // covers the target load, so admin-added tiers must slot in correctly
+  // regardless of the order they were saved in.
+  return [...loadCalculatorSettings().tiers].sort((a, b) => a.size_kva - b.size_kva);
 }
 
 export function getEffectiveFormula(): CalculatorFormula {
