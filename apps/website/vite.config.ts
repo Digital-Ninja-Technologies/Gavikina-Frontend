@@ -11,7 +11,13 @@ const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools(),
-    nitro({ preset: 'vercel', rollupConfig: { external: [/^@sentry\//] } }),
+    nitro({
+      preset: 'vercel',
+      rollupConfig: { external: [/^@sentry\//] },
+      routeRules: {
+        '/dashboard/**': { proxy: 'https://gavikina-dashboard.vercel.app/dashboard/**' },
+      },
+    }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),
