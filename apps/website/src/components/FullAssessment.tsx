@@ -107,7 +107,7 @@ export default function FullAssessment({ initialSelection }: FullAssessmentProps
   const bump = (id: string, d: number, dflt: number) => {
     setSel((cur) => {
       const curQty = cur[id] || 0;
-      const next = curQty === 0 && d > 0 ? dflt : Math.max(0, curQty + d);
+      const next = curQty === 0 && d > 0 ? dflt || 1 : Math.max(0, curQty + d);
       const nextSel = { ...cur };
       if (next === 0) delete nextSel[id];
       else nextSel[id] = next;
