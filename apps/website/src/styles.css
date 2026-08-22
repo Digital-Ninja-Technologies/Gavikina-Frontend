@@ -2,6 +2,13 @@
 @import 'tailwindcss';
 @import '@gavikina/ui/theme.css';
 
+/* Tailwind's automatic content scan is rooted at this app's own
+   directory and doesn't reach sibling workspace packages — without
+   this, any utility class used only inside @gavikina/ui (and not
+   coincidentally duplicated in this app's own source) is silently
+   never generated. */
+@source "../../../packages/ui/src";
+
 * {
   box-sizing: border-box;
 }
