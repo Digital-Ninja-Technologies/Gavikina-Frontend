@@ -13,7 +13,7 @@ export const DialogOverlay = forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-ink/62 backdrop-blur-md',
+      'fixed inset-0 z-[100] bg-ink/62 backdrop-blur-md',
       'data-[state=open]:animate-gv-in',
       className
     )}
@@ -34,7 +34,7 @@ export const DialogContent = forwardRef<ElementRef<typeof DialogPrimitive.Conten
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          'fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-6 sm:p-10',
+          'fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto p-6 sm:p-10',
           'focus:outline-none',
           className
         )}
