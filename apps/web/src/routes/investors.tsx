@@ -5,6 +5,7 @@ import type { InvestorRequestValues } from "@workspace/schemas";
 import { investorRequestSchema } from "@workspace/schemas";
 import { Button } from "@workspace/ui/components/button";
 import { FormInput, FormTextarea } from "@workspace/ui/components/form-fields";
+import { toast } from "@workspace/ui/components/toast";
 import { Check } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -45,11 +46,24 @@ function Investors() {
 		defaultValues: { name: "", email: "", phone: "", message: "" },
 	});
 	const [sent, setSent] = useState(false);
-	const mutation = useMutation({ mutationFn: submitInvestorRequest });
+	const mutation = useMutation({
+		mutationFn: submitInvestorRequest,
+		onSuccess() {
+			setSent(true);
+		},
+		onError(error) {
+			console.error("Error submitting investor request:", error);
+			toast.add({
+				title: "Error",
+				description:
+					error?.message || "Failed to send request. Please try again later.",
+				type: "error",
+			});
+		},
+	});
 
 	const onSubmit = form.handleSubmit(async (values) => {
-		await mutation.mutateAsync({ data: values });
-		setSent(true);
+		mutation.mutate({ data: values });
 	});
 
 	return (

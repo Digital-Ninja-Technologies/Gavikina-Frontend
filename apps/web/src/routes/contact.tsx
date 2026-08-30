@@ -5,6 +5,7 @@ import type { ContactFormValues } from "@workspace/schemas";
 import { contactFormSchema } from "@workspace/schemas";
 import { Button } from "@workspace/ui/components/button";
 import { FormInput, FormTextarea } from "@workspace/ui/components/form-fields";
+import { toast } from "@workspace/ui/components/toast";
 import { Check, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -50,6 +51,15 @@ function Contact() {
 			if (data.success) {
 				setSent(true);
 			}
+		},
+		onError(error) {
+			toast.add({
+				title: "Error",
+				description:
+					error?.message || "Failed to send message. Please try again later.",
+				type: "error",
+			});
+			console.error("Error submitting contact form:", error);
 		},
 	});
 
@@ -100,6 +110,7 @@ function Contact() {
 						<iframe
 							title="Map of 14 Adeola Odeku Street, Victoria Island, Lagos"
 							src="https://www.openstreetmap.org/export/embed.html?bbox=3.4141%2C6.4231%2C3.4291%2C6.4331&layer=mapnik&marker=6.4281%2C3.4216"
+							loading="lazy"
 							className="block h-64 w-full border-0"
 						/>
 						<div className="flex flex-wrap items-center justify-between gap-4 bg-white p-5">

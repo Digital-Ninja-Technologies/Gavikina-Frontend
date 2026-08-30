@@ -8,6 +8,7 @@ import {
 	useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Toaster } from "@workspace/ui/components/toast";
 import appCss from "@workspace/ui/globals.css?url";
 import nprogress from "nprogress";
 import TanstackQueryProvider from "#/integrations/tanstack-query/root-provider";
@@ -129,6 +130,7 @@ export function RootLayout() {
 				<Header />
 				<Outlet />
 				<Footer />
+				<Toaster />
 				<Modal />
 			</div>
 		</TanstackQueryProvider>

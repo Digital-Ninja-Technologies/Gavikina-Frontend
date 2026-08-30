@@ -5,6 +5,7 @@ import type { AgentApplicationValues } from "@workspace/schemas";
 import { agentApplicationSchema } from "@workspace/schemas";
 import { Button } from "@workspace/ui/components/button";
 import { FormInput, FormTextarea } from "@workspace/ui/components/form-fields";
+import { toast } from "@workspace/ui/components/toast";
 import { Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -83,6 +84,36 @@ function Agent() {
 	const mutation = useMutation({
 		mutationFn: (data: AgentApplicationValues) =>
 			submitAgentApplication({ data }),
+
+		onSuccess(_, values) {
+			setSent(true);
+			const full = buildNote(values);
+			let i = 0;
+			setAiText("");
+			setTyping(true);
+
+			if (typeRef.current) clearInterval(typeRef.current);
+
+			typeRef.current = setInterval(() => {
+				i += 3;
+				if (i >= full.length) {
+					if (typeRef.current) clearInterval(typeRef.current);
+					setAiText(full);
+					setTyping(false);
+				} else {
+					setAiText(full.slice(0, i));
+				}
+			}, 16);
+		},
+		onError(error) {
+			toast.add({
+				title: "Error",
+				description:
+					error?.message || "Failed to send message. Please try again later.",
+				type: "error",
+			});
+			console.error("Error submitting agent application:", error);
+		},
 	});
 
 	useEffect(() => {
@@ -91,26 +122,8 @@ function Agent() {
 		};
 	}, []);
 
-	const onSubmit = form.handleSubmit(async (values) => {
-		await mutation.mutateAsync(values);
-		setSent(true);
-		const full = buildNote(values);
-		let i = 0;
-		setAiText("");
-		setTyping(true);
-
-		if (typeRef.current) clearInterval(typeRef.current);
-
-		typeRef.current = setInterval(() => {
-			i += 3;
-			if (i >= full.length) {
-				if (typeRef.current) clearInterval(typeRef.current);
-				setAiText(full);
-				setTyping(false);
-			} else {
-				setAiText(full.slice(0, i));
-			}
-		}, 16);
+	const onSubmit = form.handleSubmit((values) => {
+		mutation.mutate(values);
 	});
 
 	return (

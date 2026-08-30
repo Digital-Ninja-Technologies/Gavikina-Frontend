@@ -6,6 +6,7 @@ import { careerApplicationSchema } from "@workspace/schemas";
 import { Button } from "@workspace/ui/components/button";
 import { Field, FieldLabel } from "@workspace/ui/components/field";
 import { FormInput, FormTextarea } from "@workspace/ui/components/form-fields";
+import { toast } from "@workspace/ui/components/toast";
 import { Check, Upload } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -37,11 +38,26 @@ function Careers() {
 	const mutation = useMutation({
 		mutationFn: (data: CareerApplicationValues & { cvName?: string }) =>
 			submitCareerApplication({ data }),
+
+		onSuccess(data) {
+			if (data.success) {
+				setSent(true);
+			}
+		},
+		onError(error) {
+			toast.add({
+				title: "Error",
+				description:
+					error?.message ||
+					"Failed to send application. Please try again later.",
+				type: "error",
+			});
+			console.error("Error submitting career application:", error);
+		},
 	});
 
 	const onSubmit = form.handleSubmit(async (values) => {
-		await mutation.mutateAsync({ ...values, cvName });
-		setSent(true);
+		mutation.mutate({ ...values, cvName });
 	});
 
 	const pickCv = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,7 +161,7 @@ function Careers() {
 									control={form.control}
 									name="about"
 									label="Relevant experience"
-                  rows={5}
+									rows={5}
 									className="min-h-30"
 									placeholder="Where you have worked and what you have installed or maintained"
 								/>
