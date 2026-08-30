@@ -8,7 +8,7 @@ import { cn } from "@workspace/ui/lib/utils";
 import { X } from "lucide-react";
 import FullAssessment from "#/modules/assessment/components/FullAssessment";
 import { closeModal, openAssess, useModalState } from "../store/modal";
-import SolarCalculator from "./SolarCalculator";
+import SolarCalculator from "../modules/calculator/components/SolarCalculator";
 
 export default function Modal() {
 	const { kind, prefillSelection } = useModalState();

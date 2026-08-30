@@ -11,12 +11,16 @@ import {
 	PiggyBank,
 	ShieldCheck,
 } from "lucide-react";
-import { catalogueTiersQueryOptions } from "#/modules/catalogue/query-options";
+import {
+	catalogueAppliancesQueryOptions,
+	catalogueFormulaQueryOptions,
+	catalogueTiersQueryOptions,
+} from "#/modules/catalogue/query-options";
 import { projectsQueryOptions } from "#/modules/projects/query-options";
 import { AsyncBoundary } from "../components/async-boundary";
 import ImageSlot from "../components/ImageSlot";
 import Reveal from "../components/Reveal";
-import SolarCalculator from "../components/SolarCalculator";
+import SolarCalculator from "../modules/calculator/components/SolarCalculator";
 import { HERO_SLOTS, PROJECT_PHOTOS } from "../lib/content";
 import { openAssess, openCalc } from "../store/modal";
 
@@ -26,6 +30,8 @@ export const Route = createFileRoute("/")({
 		await Promise.all([
 			context.queryClient.query(catalogueTiersQueryOptions()),
 			context.queryClient.query(projectsQueryOptions({ limit: 3 })),
+			context.queryClient.query(catalogueAppliancesQueryOptions()),
+			context.queryClient.query(catalogueFormulaQueryOptions()),
 		]);
 	},
 });

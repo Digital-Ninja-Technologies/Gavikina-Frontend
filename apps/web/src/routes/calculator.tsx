@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import SolarCalculator from "../components/SolarCalculator";
+import SolarCalculator from "../modules/calculator/components/SolarCalculator";
 import { openAssess } from "../store/modal";
 
 export const Route = createFileRoute("/calculator")({
