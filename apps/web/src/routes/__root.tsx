@@ -166,6 +166,7 @@ function NotFoundPage() {
 	);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: <any err>
 function GlobalErrorPage({ error, reset }: { error: any; reset: () => void }) {
 	return (
 		<div className="flex min-h-[65vh] flex-col items-center justify-center px-4 text-center">

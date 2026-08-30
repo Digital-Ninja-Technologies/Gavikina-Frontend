@@ -6,7 +6,7 @@ import { investorRequestSchema } from "@workspace/schemas";
 import { Button } from "@workspace/ui/components/button";
 import { FormInput, FormTextarea } from "@workspace/ui/components/form-fields";
 import { toast } from "@workspace/ui/components/toast";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { submitInvestorRequest } from "#/modules/enquiries/api";
@@ -43,15 +43,22 @@ const INVESTOR_SECTIONS = [
 function Investors() {
 	const form = useForm<InvestorRequestValues>({
 		resolver: zodResolver(investorRequestSchema),
-		defaultValues: { name: "", email: "", phone: "", message: "" },
+		defaultValues: {
+			name: "",
+			email: "",
+			phone: "",
+			investmentInterest: "",
+		},
 	});
+
 	const [sent, setSent] = useState(false);
+
 	const mutation = useMutation({
 		mutationFn: submitInvestorRequest,
 		onSuccess() {
 			setSent(true);
 		},
-		onError(error) {
+		onError(error: any) {
 			console.error("Error submitting investor request:", error);
 			toast.add({
 				title: "Error",
@@ -151,28 +158,31 @@ function Investors() {
 									placeholder="Full name"
 								/>
 
-								<FormInput
-									control={form.control}
-									name="email"
-									type="email"
-									label="Email address"
-									placeholder="you@email.com"
-								/>
+								<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+									<FormInput
+										control={form.control}
+										name="email"
+										type="email"
+										label="Email address"
+										placeholder="you@email.com"
+									/>
 
-								<FormInput
-									control={form.control}
-									name="phone"
-									type="tel"
-									label="Phone number"
-									placeholder="0803 000 0000"
-								/>
+									<FormInput
+										control={form.control}
+										name="phone"
+										type="tel"
+										label="Phone number"
+										placeholder="0803 000 0000"
+									/>
+								</div>
 
 								<FormTextarea
 									control={form.control}
-									name="message"
-									label="What are you looking for?"
-									rows={4}
-									placeholder="Ticket size, horizon, questions"
+									name="investmentInterest"
+									label="Investment interest"
+									rows={5}
+									placeholder="Tell us about your investment thesis and what you are looking for..."
+									className="resize-y"
 								/>
 
 								<Button
@@ -182,7 +192,13 @@ function Investors() {
 									className="mt-2 w-full"
 									disabled={mutation.isPending}
 								>
-									{mutation.isPending ? "Submitting..." : "Request materials"}
+									{mutation.isPending ? (
+										<span className="flex items-center gap-2">
+											<Loader2 className="size-4 animate-spin" /> Submitting...
+										</span>
+									) : (
+										"Request materials"
+									)}
 								</Button>
 							</div>
 						</form>

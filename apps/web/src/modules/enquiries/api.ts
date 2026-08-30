@@ -9,17 +9,22 @@ import { z } from "zod";
 import type { ApiResponse } from "#/lib/api-client";
 import { apiClient } from "#/lib/api-client";
 
+const isEmail = (val: string) => z.email().safeParse(val).success;
+
 export const submitContact = createServerFn({ method: "POST" })
 	.validator(contactFormSchema)
 	.handler(async ({ data: values }) => {
-		const isEmailContact = z.email().safeParse(values.contact).success;
+		const isEmailContact = isEmail(values.contact);
+
 		const payload = {
 			type: "contact",
 			source: "contact_form",
 			name: values.name,
 			email: isEmailContact ? values.contact : "no-email@provided.com",
 			phone: !isEmailContact ? values.contact : "0000000000",
-			message: values.message,
+			details: {
+				message: values.message,
+			},
 		};
 
 		return apiClient<ApiResponse<any>>("/enquiries", {
@@ -51,7 +56,7 @@ export const submitAgentApplication = createServerFn({ method: "POST" })
 	});
 
 export const submitCareerApplication = createServerFn({ method: "POST" })
-	.validator((data: unknown) => data as any)
+	.validator(careerApplicationSchema)
 	.handler(async ({ data: values }) => {
 		const payload = {
 			type: "careers",
@@ -59,10 +64,10 @@ export const submitCareerApplication = createServerFn({ method: "POST" })
 			name: values.name,
 			email: values.email,
 			phone: values.phone,
-			location: values.location,
 			details: {
 				roleAppliedFor: values.role,
 				experience: values.about,
+				location: values.location,
 				cv: values.cvName || "pending-upload-url",
 			},
 		};
@@ -82,11 +87,8 @@ export const submitInvestorRequest = createServerFn({ method: "POST" })
 			name: values.name,
 			email: values.email,
 			phone: values.phone,
-			message: values.message,
 			details: {
-				organisation: "Not provided", // Fix the frontend form to collect this
-				investmentRange: "Not provided", // Fix the frontend form to collect this
-				investmentInterest: "Not provided", // Fix the frontend form to collect this
+				whatAreYouLookingFor: values.investmentInterest,
 			},
 		};
 
