@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import FullAssessment from "../components/FullAssessment";
+import FullAssessment from "#/modules/assessment/components/FullAssessment";
 
 export const Route = createFileRoute("/assessment")({
 	component: AssessmentPage,
