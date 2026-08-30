@@ -12,10 +12,12 @@ import { useMemo, useState } from "react";
 
 interface SolarCalculatorProps {
 	onAssessment?: (selection: Selection) => void;
+	isModal?: boolean;
 }
 
 export default function SolarCalculator({
 	onAssessment,
+	isModal = false,
 }: SolarCalculatorProps) {
 	const [sel, setSel] = useState<Selection>({});
 
@@ -44,7 +46,12 @@ export default function SolarCalculator({
 	const hasSelection = !!result.tier;
 
 	return (
-		<div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-navy/10 bg-white shadow-xl lg:grid-cols-[1.35fr_1fr]">
+		<div
+			className={cn(
+				"grid grid-cols-1 overflow-hidden rounded-2xl bg-white border border-navy/14 lg:grid-cols-[1.35fr_1fr] shadow-xl",
+				isModal && "rounded-xl border-none rounded-t-none bg-transparent!",
+			)}
+		>
 			{/* APPLIANCE SELECTOR */}
 			<div className="min-w-0 p-6 sm:p-8">
 				<div className="mb-2 flex flex-wrap items-center gap-3">
@@ -60,7 +67,7 @@ export default function SolarCalculator({
 					same engine our engineers quote from.
 				</p>
 
-				<div className="flex max-h-128 flex-col gap-6 overflow-y-auto pr-2">
+				<div className="flex max-h-128 flex-col gap-6 overflow-y-auto no-scrollbar pr-2">
 					{groups.map((group) => (
 						<div key={group.name}>
 							<div className="mb-3 flex items-center gap-3">
@@ -142,8 +149,9 @@ export default function SolarCalculator({
 
 			{/* RESULT PANEL */}
 			<div className="relative flex min-w-0 flex-col justify-between overflow-hidden bg-ink p-6 text-white sm:p-8">
-				<div className="pointer-events-none absolute -right-12 -top-12 size-48 rounded-full bg-[radial-gradient(circle_at_35%_30%,rgba(245,166,35,0.3),rgba(245,166,35,0)_70%)]" />
-
+				{!isModal && (
+					<div className="pointer-events-none absolute -right-12 -top-12 size-48 rounded-full bg-[radial-gradient(circle_at_35%_30%,rgba(245,166,35,0.3),rgba(245,166,35,0)_70%)]" />
+				)}
 				<div className="relative">
 					<span className="text-xs font-semibold uppercase tracking-wider text-white/50">
 						Your estimate

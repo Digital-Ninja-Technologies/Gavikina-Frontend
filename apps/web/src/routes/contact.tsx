@@ -78,7 +78,7 @@ function Contact() {
 									className="flex items-start gap-4 rounded-2xl border border-navy/10 bg-white p-6 shadow-xs"
 								>
 									<span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-green/10 text-green">
-										<Icon className="size-5" />
+										<Icon className="size-4" />
 									</span>
 									<div>
 										<span className="text-xs font-semibold uppercase tracking-wider text-navy/50">

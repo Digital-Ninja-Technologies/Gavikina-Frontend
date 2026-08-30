@@ -209,7 +209,7 @@ function Home() {
 							<span className="text-xs font-semibold uppercase tracking-widest text-green">
 								Solar calculator
 							</span>
-							<h2 className="mt-2 max-w-xl text-2xl font-semibold tracking-tight text-navy sm:text-3xl lg:text-4xl">
+							<h2 className="mt-2 max-w-lg leading-[1.2] text-2xl font-semibold tracking-tight text-navy sm:text-3xl lg:text-4xl">
 								Size your system without leaving this page.
 							</h2>
 						</div>
@@ -372,8 +372,9 @@ function HomeTiersSkeleton() {
 		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
 			{[...Array(5)].map((_, i) => (
 				<div
+					// biome-ignore lint/suspicious/noArrayIndexKey: <skeleton is static>
 					key={i}
-					className="flex h-[200px] flex-col gap-3 rounded-2xl border border-navy/10 bg-white p-6"
+					className="flex h-50 flex-col gap-3 rounded-2xl border border-navy/10 bg-white p-6"
 				>
 					<Skeleton className="h-8 w-20" />
 					<Skeleton className="h-5 w-32" />

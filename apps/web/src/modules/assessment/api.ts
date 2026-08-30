@@ -1,5 +1,5 @@
-import type { Selection } from "@gavikina/engine";
-import type { AssessmentContactValues } from "@gavikina/schemas";
+import type { Selection } from "@workspace/engine";
+import type { AssessmentContactValues } from "@workspace/schemas";
 
 export interface AssessmentSubmission extends AssessmentContactValues {
 	property: string;

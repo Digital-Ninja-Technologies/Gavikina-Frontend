@@ -5,14 +5,20 @@ import {
 	HeadContent,
 	Outlet,
 	Scripts,
+	useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import appCss from "@workspace/ui/globals.css?url";
+import nprogress from "nprogress";
 import TanstackQueryProvider from "#/integrations/tanstack-query/root-provider";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Modal from "../components/Modal";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
+import "nprogress/nprogress.css";
+import { useEffect } from "react";
+
+nprogress.configure({ showSpinner: false, minimum: 0.15 });
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -106,6 +112,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 }
 
 export function RootLayout() {
+	const isLoading = useRouterState({ select: (s) => s.isLoading });
+
+	useEffect(() => {
+		if (isLoading) {
+			nprogress.start();
+		} else {
+			nprogress.done();
+		}
+	}, [isLoading]);
+
 	const { queryClient } = Route.useRouteContext();
 	return (
 		<TanstackQueryProvider queryClient={queryClient}>
