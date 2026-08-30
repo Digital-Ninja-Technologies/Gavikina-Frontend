@@ -7,7 +7,7 @@ import { Skeleton } from "@workspace/ui/components/skeleton";
 import { toast } from "@workspace/ui/components/toast";
 import { cn } from "@workspace/ui/lib/utils";
 import { Loader2, Minus, Plus } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { CalculateResponseData } from "#/modules/calculator/api";
 import { calculateSystemLoad } from "#/modules/calculator/api";
 import { catalogueAppliancesQueryOptions } from "#/modules/catalogue/query-options";
@@ -47,50 +47,50 @@ function SolarCalculatorContent({
 			.map(([applianceId, quantity]) => ({ applianceId, quantity }));
 	}, [sel]);
 
-	const {
-		maybeExecute,
-		cancel,
-		state: { isPending, isExecuting },
-	} = useAsyncDebouncer<
-		(currentPayload: typeof payload) => Promise<CalculateResponseData>,
-		{
-			isPending: boolean;
-			isExecuting: boolean;
-		}
-	>(
+	const executeCalculation = useCallback(
 		async (currentPayload: typeof payload) => {
 			const res = await calculateSystemLoad({
 				data: { appliances: currentPayload },
 			});
 			return res.data;
 		},
-		{
+		[],
+	);
+
+	const debouncerOptions = useMemo(
+		() => ({
 			wait: 350,
-			onSuccess: (data) => setCalcResult(data),
-			onError: (error) => {
+			onSuccess: (data: CalculateResponseData) => setCalcResult(data),
+			onError: (error: any) => {
 				console.error("Failed to calculate system load:", error);
 				toast.add({
 					title: "Error",
-					description:
-						error?.message ||
-						"Failed to calculate system load. Please try again later.",
+					description: error?.message || "Failed to calculate system load.",
 					type: "error",
 				});
 			},
-			onUnmount: (debouncer) => debouncer.cancel(),
-		},
-		(state) => ({
-			isPending: state.isPending,
-			isExecuting: state.isExecuting,
 		}),
+		[],
 	);
+
+	const {
+		maybeExecute,
+		cancel,
+		state: { isPending, isExecuting },
+	} = useAsyncDebouncer<
+		(currentPayload: typeof payload) => Promise<CalculateResponseData>,
+		{ isPending: boolean; isExecuting: boolean }
+	>(executeCalculation, debouncerOptions, (state) => ({
+		isPending: state.isPending,
+		isExecuting: state.isExecuting,
+	}));
 
 	useEffect(() => {
 		if (payload.length > 0) {
 			void maybeExecute(payload);
 		} else {
 			cancel();
-			setCalcResult(null);
+			setCalcResult((prev) => (prev !== null ? null : prev));
 		}
 	}, [payload, maybeExecute, cancel]);
 
@@ -347,7 +347,7 @@ function SolarCalculatorSkeleton({ isModal }: { isModal?: boolean }) {
 				<Skeleton className="mb-6 h-10 w-full max-w-xl" />
 				<div className="flex flex-col gap-6">
 					{[...Array(3)].map((_, i) => (
-						// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
+						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 						<div key={i}>
 							<Skeleton className="mb-3 h-4 w-24" />
 							<div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">

@@ -1,20 +1,22 @@
+// src/components/async-boundary.tsx
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { AlertCircle, Loader2, RefreshCcw } from "lucide-react";
 import type React from "react";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import type { ApiError } from "#/lib/api-client";
 
 export function ComponentErrorState({
 	error,
 	resetErrorBoundary,
 	title,
 }: {
-	error: Error;
+	error: Error | ApiError;
 	resetErrorBoundary: () => void;
 	title?: string;
 }) {
-	const errorTitle = title || "Unable to load data";
+	const errorTitle = title || "Something went wrong";
 
 	return (
 		<div className="flex min-h-40 flex-col items-center justify-center space-y-4 p-6 text-center">

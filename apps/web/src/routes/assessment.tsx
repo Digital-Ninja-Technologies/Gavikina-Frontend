@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import FullAssessment from "#/modules/assessment/components/FullAssessment";
+import AssessmentWizard from "#/modules/assessment/components/assessment-wizard";
 
 export const Route = createFileRoute("/assessment")({
 	component: AssessmentPage,
@@ -19,7 +19,8 @@ function AssessmentPage() {
 				spend on fuel. We ask for your details only after you have seen the
 				result.
 			</p>
-			<FullAssessment />
+
+			<AssessmentWizard />
 		</div>
 	);
 }

@@ -3,6 +3,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
 	HeadContent,
+	Link,
 	Outlet,
 	Scripts,
 	useRouterState,
@@ -17,6 +18,8 @@ import Header from "../components/Header";
 import Modal from "../components/Modal";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import "nprogress/nprogress.css";
+import { Button } from "@workspace/ui/components/button";
+import { AlertCircle } from "lucide-react";
 import { useEffect } from "react";
 
 nprogress.configure({ showSpinner: false, minimum: 0.15 });
@@ -84,6 +87,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 	}),
 	component: RootLayout,
 	shellComponent: RootDocument,
+	notFoundComponent: NotFoundPage,
+	errorComponent: GlobalErrorPage,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -134,5 +139,59 @@ export function RootLayout() {
 				<Modal />
 			</div>
 		</TanstackQueryProvider>
+	);
+}
+
+function NotFoundPage() {
+	return (
+		<div className="flex min-h-[65vh] flex-col items-center justify-center px-4 text-center">
+			<h1 className="text-7xl font-bold tracking-tight text-navy sm:text-9xl">
+				404
+			</h1>
+			<h2 className="mt-4 text-xl font-semibold tracking-tight text-navy sm:text-2xl">
+				Page not found
+			</h2>
+			<p className="mt-2 max-w-md text-sm leading-relaxed text-navy/70">
+				The page you are looking for doesn't exist or has been moved.
+			</p>
+			<Button
+				size="lg"
+				className="mt-8"
+				nativeButton={false}
+				render={<Link to="/" />}
+			>
+				Go back home
+			</Button>
+		</div>
+	);
+}
+
+function GlobalErrorPage({ error, reset }: { error: any; reset: () => void }) {
+	return (
+		<div className="flex min-h-[65vh] flex-col items-center justify-center px-4 text-center">
+			<span className="flex size-16 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+				<AlertCircle className="size-8" />
+			</span>
+			<h1 className="mt-6 text-2xl font-semibold tracking-tight text-navy sm:text-3xl">
+				Something went wrong
+			</h1>
+			<p className="mt-2 max-w-md text-sm leading-relaxed text-navy/70">
+				{error?.message ||
+					"An unexpected error occurred while loading this page."}
+			</p>
+			<div className="mt-8 flex items-center gap-4">
+				<Button onClick={reset} size="lg">
+					Try again
+				</Button>
+				<Button
+					variant="outline"
+					size="lg"
+					nativeButton={false}
+					render={<Link to="/" />}
+				>
+					Go home
+				</Button>
+			</div>
+		</div>
 	);
 }

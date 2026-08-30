@@ -1,5 +1,6 @@
 import { createStore, useSelector } from "@tanstack/react-store";
 import type { Selection } from "@workspace/engine";
+import { assessmentActions } from "../modules/assessment/store";
 
 type ModalKind = "calc" | "assess" | null;
 
@@ -8,8 +9,6 @@ interface ModalState {
 	prefillSelection?: Selection;
 }
 
-// Global UI state (the calculator/assessment modal) shared across the whole
-// route tree — TanStack Store, as called for by the project architecture.
 export const modalStore = createStore<ModalState>({
 	kind: null,
 	prefillSelection: undefined,
@@ -20,6 +19,10 @@ export function openCalc() {
 }
 
 export function openAssess(selection?: Selection) {
+	if (selection && Object.keys(selection).length > 0) {
+		assessmentActions.updateField("selection", selection);
+	}
+
 	modalStore.setState((s) => ({
 		kind: "assess",
 		prefillSelection: selection ?? s.prefillSelection,
@@ -31,5 +34,5 @@ export function closeModal() {
 }
 
 export function useModalState() {
-	return useSelector(modalStore);
+	return useSelector(modalStore, (s) => s);
 }

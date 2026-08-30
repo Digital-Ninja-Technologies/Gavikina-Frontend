@@ -1,18 +1,34 @@
-import type { Selection } from "@workspace/engine";
-import type { AssessmentContactValues } from "@workspace/schemas";
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import type { ApiResponse } from "#/lib/api-client";
+import { apiClient } from "#/lib/api-client";
 
-export interface AssessmentSubmission extends AssessmentContactValues {
-	property: string;
-	reason: string;
-	selection: Selection;
-	backup: string;
-	fuel: number;
-	payment: string;
-	inspection: boolean;
-}
+export const startAssessmentSession = createServerFn({
+	method: "POST",
+}).handler(async () => {
+	return apiClient<ApiResponse<{ sessionId: string; currentStep: number }>>(
+		"/assessment/start",
+		{ method: "POST" },
+	);
+});
 
-export async function submitAssessment(values: AssessmentSubmission) {
-	// await simulateLatency();
-	const ref = `GAV-${Math.floor(2600 + Math.random() * 400)}`;
-	return { ok: true as const, ref, values };
-}
+export const saveAssessmentStep = createServerFn({ method: "POST" })
+	.validator(
+		z.object({
+			sessionId: z.string(),
+			step: z.number(),
+			data: z.record(z.string(), z.any()),
+		}),
+	)
+	.handler(async ({ data: payload }) => {
+		return apiClient<ApiResponse<any>>("/assessment/step", {
+			method: "POST",
+			body: JSON.stringify(payload),
+		});
+	});
+
+export const getAssessmentData = createServerFn({ method: "GET" })
+	.validator(z.string())
+	.handler(async ({ data: sessionId }) => {
+		return apiClient<ApiResponse<any>>(`/assessment/${sessionId}`);
+	});

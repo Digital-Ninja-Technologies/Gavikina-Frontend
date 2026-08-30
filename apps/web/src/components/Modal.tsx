@@ -6,12 +6,12 @@ import {
 } from "@workspace/ui/components/dialog";
 import { cn } from "@workspace/ui/lib/utils";
 import { X } from "lucide-react";
-import FullAssessment from "#/modules/assessment/components/FullAssessment";
+import AssessmentWizard from "#/modules/assessment/components/assessment-wizard";
 import SolarCalculator from "../modules/calculator/components/SolarCalculator";
 import { closeModal, openAssess, useModalState } from "../store/modal";
 
 export default function Modal() {
-	const { kind, prefillSelection } = useModalState();
+	const { kind } = useModalState();
 
 	const title =
 		kind === "calc" ? "Solar System Calculator" : "Full Engineering Assessment";
@@ -45,9 +45,7 @@ export default function Modal() {
 								onAssessment={(sel) => openAssess(sel)}
 							/>
 						)}
-						{kind === "assess" && (
-							<FullAssessment initialSelection={prefillSelection} />
-						)}
+						{kind === "assess" && <AssessmentWizard />}
 					</div>
 				</DialogContent>
 			)}

@@ -1,8 +1,3 @@
-// Gavikina Energy — shared sizing engine.
-// Single source of truth for appliance wattages, system tiers, and the
-// sizing/fuel-comparison math. Consumed by the website's Solar Calculator
-// and Lead Qualifier, and by the dashboard's Overview stats and Projects form.
-
 export interface Appliance {
 	id: string;
 	name: string;
@@ -197,82 +192,6 @@ export const APPLIANCES: Appliance[] = [
 	},
 ];
 
-// Indicative pricing — pending client confirmation.
-export const TIERS: Tier[] = [
-	{
-		id: "t15",
-		name: "1.5kVA",
-		size_kva: 1.5,
-		price_range_min: 850000,
-		price_range_max: 1150000,
-		typically_powers: [
-			"Lights and fans",
-			"TV and decoder",
-			"Phone and laptop charging",
-			"Wi-Fi router",
-		],
-		notes: "Essentials backup for a small flat or shop.",
-	},
-	{
-		id: "t25",
-		name: "2.5kVA",
-		size_kva: 2.5,
-		price_range_min: 1400000,
-		price_range_max: 1850000,
-		typically_powers: [
-			"Everything in 1.5kVA",
-			"Fridge or freezer",
-			"Water pump",
-			"Small office equipment",
-		],
-		notes: "The common choice for a two-bedroom home.",
-	},
-	{
-		id: "t35",
-		name: "3.5kVA",
-		size_kva: 3.5,
-		price_range_min: 2200000,
-		price_range_max: 2800000,
-		typically_powers: [
-			"Everything in 2.5kVA",
-			"One 1HP air conditioner",
-			"Freezer plus fridge",
-			"Iron in short bursts",
-		],
-		notes: "Comfortable whole-home cover with one AC.",
-	},
-	{
-		id: "t5",
-		name: "5kVA",
-		size_kva: 5,
-		price_range_min: 3400000,
-		price_range_max: 4200000,
-		typically_powers: [
-			"Everything in 3.5kVA",
-			"Two air conditioners",
-			"Microwave and washing machine",
-			"Busy retail floor",
-		],
-		notes: "Larger homes and small businesses.",
-	},
-	{
-		id: "t10",
-		name: "10kVA",
-		size_kva: 10,
-		price_range_min: 6800000,
-		price_range_max: 8500000,
-		typically_powers: [
-			"Multiple ACs",
-			"Display chillers and cold storage",
-			"Full office floor",
-			"Light workshop tools",
-		],
-		notes: "Business-grade. Site inspection required before quoting.",
-	},
-];
-
-export const SIZE_TIERS = TIERS.map((t) => t.name);
-
 export const INCLUDED = [
 	"Solar panels",
 	"Hybrid inverter",
@@ -301,12 +220,10 @@ export const REASONS: Reason[] = [
 
 export const PAYMENT_METHODS: PaymentMethod[] = [
 	{ id: "full", label: "Full payment upfront" },
-	{ id: "stages", label: "Staged payment" },
-	{ id: "finance", label: "Financing / instalments" },
-	{ id: "advise", label: "Not sure — advise me" },
+	{ id: "staged", label: "Staged payment" },
+	{ id: "financing", label: "Financing / instalments" },
+	{ id: "not_sure", label: "Not sure — advise me" },
 ];
-
-export const CATEGORIES = [...new Set(APPLIANCES.map((a) => a.category))];
 
 export const fmt = (n: number) => `₦${Math.round(n).toLocaleString("en-NG")}`;
 export const fmtRange = (t: Tier) =>
@@ -319,65 +236,4 @@ export interface CalculatorFormula {
 	powerFactor: number;
 	// Extra capacity required when 12h+ backup is requested, e.g. 1.15 = 15% more.
 	longBackupBoost: number;
-}
-
-export const DEFAULT_FORMULA: CalculatorFormula = {
-	headroom: 1.3,
-	powerFactor: 0.8,
-	longBackupBoost: 1.15,
-};
-
-export function watts(
-	selection: Selection,
-	appliances: Appliance[] = APPLIANCES,
-): number {
-	return appliances.reduce(
-		(sum, a) => sum + (selection[a.id] || 0) * a.typical_wattage,
-		0,
-	);
-}
-
-// Peak load + headroom, converted at the configured power factor.
-export function size(
-	selection: Selection,
-	backupHours?: number,
-	appliances: Appliance[] = APPLIANCES,
-	tiers: Tier[] = TIERS,
-	formula: CalculatorFormula = DEFAULT_FORMULA,
-) {
-	const w = watts(selection, appliances);
-	const requiredKva =
-		w === 0 ? 0 : (w * formula.headroom) / formula.powerFactor / 1000;
-	const long = !!backupHours && backupHours >= 12;
-	const target = long ? requiredKva * formula.longBackupBoost : requiredKva;
-	const tier =
-		tiers.find((t) => t.size_kva >= target) || tiers[tiers.length - 1];
-	return { watts: w, requiredKva, tier: w === 0 ? null : tier };
-}
-
-export interface FuelComparison {
-	monthlySpend: number;
-	annualSpend: number;
-	fiveYearSpend: number;
-	systemMid: number;
-	paybackMonths: number;
-	fiveYearSaving: number;
-}
-
-// Rough monthly saving: fuel spend avoided, against amortised system midpoint over 7 years.
-export function fuelCompare(
-	monthlySpend: number,
-	tier: Tier | null,
-): FuelComparison | null {
-	if (!tier || !monthlySpend) return null;
-	const mid = (tier.price_range_min + tier.price_range_max) / 2;
-	const months = mid / monthlySpend;
-	return {
-		monthlySpend,
-		annualSpend: monthlySpend * 12,
-		fiveYearSpend: monthlySpend * 60,
-		systemMid: mid,
-		paybackMonths: Math.round(months),
-		fiveYearSaving: Math.max(0, monthlySpend * 60 - mid),
-	};
 }
