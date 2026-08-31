@@ -3,6 +3,7 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { TooltipProvider } from "@workspace/ui/components/tooltip";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { ConfirmProvider } from "#/components/confirm-provider";
 import { queryClient } from "./lib/query-client";
 import { routeTree } from "./routeTree.gen";
 
@@ -27,9 +28,11 @@ if (rootElement && !rootElement.innerHTML) {
 	root.render(
 		<StrictMode>
 			<QueryClientProvider client={queryClient}>
-				<TooltipProvider>
-					<RouterProvider router={router} />
-				</TooltipProvider>
+				<ConfirmProvider>
+					<TooltipProvider>
+						<RouterProvider router={router} />
+					</TooltipProvider>
+				</ConfirmProvider>
 			</QueryClientProvider>
 		</StrictMode>,
 	);

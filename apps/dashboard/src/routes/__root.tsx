@@ -16,6 +16,7 @@ import { useEffect } from "react";
 
 import "@workspace/ui/globals.css";
 import "nprogress/nprogress.css";
+import { GlobalDialog } from "#/components/global-dialog";
 
 nprogress.configure({ showSpinner: false, minimum: 0.15 });
 
@@ -45,6 +46,7 @@ function RootLayout() {
 			{/* The Outlet renders EITHER the full-screen Login OR the Protected Layout */}
 			<Outlet />
 
+			<GlobalDialog />
 			<Toaster />
 
 			<TanStackDevtools

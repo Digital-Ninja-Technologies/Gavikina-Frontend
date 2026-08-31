@@ -1,14 +1,5 @@
-import type { ApiResponse } from "#/lib/api-client";
+import type { ApiResponse, PaginatedResponse } from "#/lib/api-client";
 import { apiClient } from "#/lib/api-client";
-
-export interface ApiMeta {
-	page: number;
-	limit: number;
-	total: number;
-	totalPages: number;
-}
-
-export type PaginatedResponse<T> = ApiResponse<T> & { meta: ApiMeta };
 
 export interface EnquiriesQueryParams {
 	type?: string;

@@ -7,6 +7,15 @@ export type ApiResponse<T> = {
 	data: T;
 };
 
+export interface ApiMeta {
+	page: number;
+	limit: number;
+	total: number;
+	totalPages: number;
+}
+
+export type PaginatedResponse<T> = ApiResponse<T> & { meta: ApiMeta };
+
 export class ApiError extends Error {
 	public status?: number;
 	// biome-ignore lint/suspicious/noExplicitAny: Error payload shape varies
@@ -31,13 +40,12 @@ export async function apiClient<T>(
 		response = await fetch(`${BASE_URL}${endpoint}`, {
 			...options,
 			headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("admin_token") || ""}`,
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${localStorage.getItem("admin_token") || ""}`,
 				...options.headers,
 			},
 		});
 	} catch (error) {
-		// Catches DNS failures, offline states, and CORS errors
 		throw new ApiError(
 			error instanceof Error ? error.message : "Network request failed",
 		);
@@ -48,20 +56,44 @@ export async function apiClient<T>(
 		let errorMessage = `Request failed with status ${response.status}`;
 
 		try {
-			// Read as text first to avoid crashing on HTML error pages (e.g. 502 Bad Gateway)
 			const text = await response.text();
 			try {
 				errorData = JSON.parse(text);
-				// If your API standardizes on { message: string }, extract it
-				if (
-					errorData &&
-					typeof errorData === "object" &&
-					"message" in errorData
-				) {
-					errorMessage = (errorData as { message: string }).message;
+
+				if (errorData && typeof errorData === "object") {
+					const data = errorData as Record<string, unknown>;
+
+					// Handle Zod-style field/form validation errors
+					if (data.errors && typeof data.errors === "object") {
+						const errs = data.errors as {
+							formErrors?: string[];
+							fieldErrors?: Record<string, string[]>;
+						};
+
+						const parts: string[] = [];
+
+						if (errs.formErrors?.length) {
+							parts.push(...errs.formErrors);
+						}
+
+						if (errs.fieldErrors) {
+							for (const messages of Object.values(errs.fieldErrors)) {
+								parts.push(...messages);
+							}
+						}
+
+						if (parts.length > 0) {
+							errorMessage = parts.join(" \n ");
+						} else if (data.message && typeof data.message === "string") {
+							errorMessage = data.message;
+						}
+					}
+					// Handle standard message errors
+					else if (data.message && typeof data.message === "string") {
+						errorMessage = data.message;
+					}
 				}
 			} catch {
-				// Body is not JSON, keep it as raw text
 				errorData = text;
 				if (text.trim()) errorMessage = text.trim();
 			}
