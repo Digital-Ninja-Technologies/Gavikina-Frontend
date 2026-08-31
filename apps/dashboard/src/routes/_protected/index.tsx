@@ -10,6 +10,7 @@ import { Skeleton } from "@workspace/ui/components/skeleton";
 import { cn } from "@workspace/ui/lib/utils";
 import { useMemo } from "react";
 import { AsyncBoundary } from "#/components/async-boundary";
+import { getStableDateRange } from "#/lib/get-date-range";
 import { dashboardOverviewQueryOptions } from "@/modules/dashboard/query-options";
 
 export const Route = createFileRoute("/_protected/")({
@@ -24,33 +25,11 @@ const TYPE_STYLES: Record<string, { label: string; colorClass: string }> = {
 	contact: { label: "Contact form", colorClass: "bg-navy/35" },
 };
 
-function getStableDateRange() {
-	const end = new Date();
-	const start = new Date();
-	start.setDate(end.getDate() - 7);
-
-	const startDate = start.toISOString().split("T")[0];
-	const endDate = end.toISOString().split("T")[0];
-
-	const label = `${start.toLocaleDateString("en-GB", {
-		day: "numeric",
-		month: "short",
-	})} – ${end.toLocaleDateString("en-GB", {
-		day: "numeric",
-		month: "short",
-		year: "numeric",
-	})}`;
-
-	return { startDate, endDate, label };
-}
-
-// 1. MAIN PAGE (Renders instantly)
 function OverviewRoute() {
 	const dateRange = useMemo(() => getStableDateRange(), []);
 
 	return (
 		<div className="flex flex-col gap-8 animate-gv-fade">
-			{/* Static Page Header renders immediately outside Suspense */}
 			<div>
 				<h1 className="page-title">Overview</h1>
 				<p className="page-description mt-1">
@@ -59,7 +38,6 @@ function OverviewRoute() {
 				</p>
 			</div>
 
-			{/* Only the data grids suspend */}
 			<AsyncBoundary
 				errorTitle="Failed to load dashboard overview"
 				fallback={<OverviewSkeleton />}

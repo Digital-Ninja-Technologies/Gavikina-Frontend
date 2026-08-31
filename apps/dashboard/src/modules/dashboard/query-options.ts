@@ -8,9 +8,19 @@ import {
 
 export const dashboardKeys = {
 	all: ["dashboard"] as const,
+	stats: () => [...dashboardKeys.all, "stats"] as const,
 	overview: (params: { startDate: string; endDate: string }) =>
 		[...dashboardKeys.all, "overview", params] as const,
 };
+
+export const dashboardStatsQueryOptions = () =>
+	queryOptions({
+		queryKey: dashboardKeys.stats(),
+		queryFn: async () => {
+			const res = await getDashboardStats();
+			return res.data;
+		},
+	});
 
 export const dashboardOverviewQueryOptions = (params: {
 	startDate: string;

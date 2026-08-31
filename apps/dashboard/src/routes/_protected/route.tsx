@@ -19,9 +19,14 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@workspace/ui/components/sidebar";
-import DashboardCatchBoundary from "@/components/catch-boundary";
+import { getStableDateRange } from "#/lib/get-date-range";
 import { AppSidebar } from "@/components/app-sidebar";
+import DashboardCatchBoundary from "@/components/catch-boundary";
 import { sessionQueryOptions } from "@/modules/auth/query-options";
+import {
+	dashboardOverviewQueryOptions,
+	dashboardStatsQueryOptions,
+} from "@/modules/dashboard/query-options";
 
 export const Route = createFileRoute("/_protected")({
 	component: ProtectedLayout,
@@ -33,8 +38,11 @@ export const Route = createFileRoute("/_protected")({
 			throw redirect({ to: "/login", search: { redirect: location.href } });
 		}
 
-		// Optional: Prefetch dashboard stats for the sidebar badges
-		// await context.queryClient.query(dashboardStatsQueryOptions());
+		void context.queryClient.query(dashboardStatsQueryOptions());
+		const { startDate, endDate } = getStableDateRange();
+		void context.queryClient.query(
+			dashboardOverviewQueryOptions({ startDate, endDate }),
+		);
 
 		return { user: session.user };
 	},
