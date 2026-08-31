@@ -1,5 +1,4 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -8,18 +7,13 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@workspace/ui/components/card";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import { cn } from "@workspace/ui/lib/utils";
-import { ArrowLeft, Download, FileText, Mail, Phone } from "lucide-react";
-
+import { Download, FileText, Mail, Phone } from "lucide-react";
 import type { Lead } from "#/lib/data";
-import { naira, viewInfo } from "#/lib/data";
+import { naira } from "#/lib/data";
 import { csvFor, download } from "#/lib/utils";
-import { enquiryDetailQueryOptions } from "../query-options";
-
-interface EnquiryDetailViewProps {
-	id: string;
-	view: string;
-}
+import { enquiryDetailQueryOptions } from "@/modules/enquiries/query-options";
 
 function fieldsFor(open: Lead): [string, string][] {
 	const fields: [string, string][] = [];
@@ -79,15 +73,14 @@ function fieldsFor(open: Lead): [string, string][] {
 	return fields;
 }
 
-export default function EnquiryDetailView({
+export function EnquiryDetailContent({
 	id,
 	view,
-}: EnquiryDetailViewProps) {
-	const navigate = useNavigate();
-
+}: {
+	id: string;
+	view: string;
+}) {
 	const { data: open } = useSuspenseQuery(enquiryDetailQueryOptions(id, view));
-
-	const [title] = viewInfo(view);
 	const detailFields = fieldsFor(open);
 
 	const totalWatts = open.appliances
@@ -116,27 +109,8 @@ export default function EnquiryDetailView({
 			? "Contact details captured. Reach out using the details below."
 			: "No contact details were captured before drop-off. Only the entered assessment data is available.";
 
-	const handleBack = () => {
-		if (window.history.length > 1) {
-			window.history.back();
-		} else {
-			navigate({
-				to: "/enquiries",
-				search: { view } as any,
-			});
-		}
-	};
-
 	return (
 		<div className="flex flex-col gap-6 animate-gv-fade">
-			<button
-				type="button"
-				className="inline-flex items-center gap-1.5 text-xs font-medium text-navy/60 hover:text-navy"
-				onClick={handleBack}
-			>
-				<ArrowLeft className="size-3.5" /> Back to {title}
-			</button>
-
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 				<div>
 					<Badge variant="outline" className="text-xs font-semibold">
@@ -299,6 +273,65 @@ export default function EnquiryDetailView({
 								>
 									<Mail className="size-4" /> Send an email
 								</Button>
+							</div>
+						</CardContent>
+					</Card>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+// -----------------------------------------------------------------------------
+// SKELETON LOADER
+// -----------------------------------------------------------------------------
+
+export function EnquiryDetailSkeleton() {
+	return (
+		<div className="flex flex-col gap-6 animate-gv-fade mt-6">
+			{/* Header area */}
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+				<div className="space-y-2">
+					<Skeleton className="h-5 w-20 rounded-full bg-navy/10" />
+					<Skeleton className="h-9 w-64 bg-navy/10" />
+					<Skeleton className="h-4 w-48 bg-navy/5" />
+				</div>
+				<Skeleton className="h-9 w-32 bg-navy/10" />
+			</div>
+
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.6fr_1fr]">
+				{/* Main Column */}
+				<div className="flex flex-col gap-6">
+					<Card className="border-navy/10 shadow-xs">
+						<CardContent className="p-0">
+							{Array.from({ length: 6 }).map((_, i) => (
+								<div
+									// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton
+									key={i}
+									className={cn(
+										"flex items-center justify-between px-6 py-4",
+										i > 0 && "border-t border-navy/10",
+									)}
+								>
+									<Skeleton className="h-4 w-32 bg-navy/10" />
+									<Skeleton className="h-4 w-48 bg-navy/5" />
+								</div>
+							))}
+						</CardContent>
+					</Card>
+				</div>
+
+				{/* Sidebar */}
+				<div className="flex flex-col gap-6">
+					<Card className="border-navy/10 shadow-xs">
+						<CardHeader className="pb-2">
+							<Skeleton className="h-5 w-24 bg-navy/10" />
+						</CardHeader>
+						<CardContent className="flex flex-col gap-4">
+							<Skeleton className="h-10 w-full bg-navy/5" />
+							<div className="flex flex-col gap-2">
+								<Skeleton className="h-9 w-full bg-navy/10" />
+								<Skeleton className="h-9 w-full bg-navy/10" />
 							</div>
 						</CardContent>
 					</Card>

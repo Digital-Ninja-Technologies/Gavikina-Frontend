@@ -1,18 +1,27 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Card } from "@workspace/ui/components/card";
-import { Skeleton } from "@workspace/ui/components/skeleton";
+import { useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Button } from "@workspace/ui/components/button";
+import { Input } from "@workspace/ui/components/input";
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@workspace/ui/components/table";
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@workspace/ui/components/select";
+import { cn } from "@workspace/ui/lib/utils";
+import { Download, Search } from "lucide-react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { AsyncBoundary } from "#/components/async-boundary";
-import EnquiryTable from "#/modules/enquiries/components/enquiries-table";
-import { enquiriesListQueryOptions } from "#/modules/enquiries/query-options";
+import type { Lead } from "#/lib/data";
+import { viewInfo } from "#/lib/data";
+import { csvFor, download } from "#/lib/utils";
+import {
+	EnquiriesTableSkeleton,
+	EnquiryTableContent,
+} from "#/modules/enquiries/components/enquiries-table";
+import { enquiriesListQueryOptions } from "@/modules/enquiries/query-options";
 
 export const enquiriesSearchSchema = z.object({
 	view: z.string().default("all").catch("all"),
@@ -33,101 +42,165 @@ export const Route = createFileRoute("/_protected/enquiries/")({
 	component: EnquiriesRoute,
 });
 
+const TYPE_FILTERS = [
+	"All types",
+	"Customer",
+	"Agent",
+	"Investor",
+	"Career",
+	"Contact",
+] as const;
+
+const DATE_OPTIONS = [
+	"All dates",
+	"Today",
+	"Yesterday",
+	"Last 3 days",
+	"Last 7 days",
+];
+
 function EnquiriesRoute() {
 	const searchParams = Route.useSearch();
-	return (
-		<AsyncBoundary
-			errorTitle="Failed to load enquiries"
-			fallback={<EnquiriesSkeleton />}
-		>
-			<EnquiryTable searchParams={searchParams} />
-		</AsyncBoundary>
-	);
-}
+	const navigate = useNavigate({ from: "/enquiries/" });
+	const queryClient = useQueryClient();
 
-// -----------------------------------------------------------------------------
-// SKELETON LOADER
-// -----------------------------------------------------------------------------
+	const [localSearch, setLocalSearch] = useState(searchParams.search);
 
-function EnquiriesSkeleton() {
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			if (localSearch !== searchParams.search) {
+				navigate({
+					search: (prev) => ({ ...prev, search: localSearch, page: 1 }),
+				});
+			}
+		}, 400);
+		return () => clearTimeout(timeout);
+	}, [localSearch, searchParams.search, navigate]);
+
+	const filtersActive =
+		Boolean(searchParams.search.trim()) ||
+		searchParams.typeFilter !== "All types" ||
+		searchParams.date !== "All dates";
+
+	const [title, note] = viewInfo(searchParams.view);
+
+	const clearFilters = () => {
+		setLocalSearch("");
+		navigate({
+			search: (prev) => ({
+				...prev,
+				search: "",
+				typeFilter: "All types",
+				date: "All dates",
+				page: 1,
+			}),
+		});
+	};
+
+	const handleDownload = () => {
+		// Fetch directly from cache so the download button doesn't need to be suspended
+		const queryKey = enquiriesListQueryOptions(searchParams).queryKey;
+		const cached = queryClient.getQueryData<{ data: Lead[] }>(queryKey);
+		if (cached?.data) {
+			download(`gavikina-${searchParams.view}.csv`, csvFor(cached.data));
+		}
+	};
+
 	return (
 		<div className="flex animate-gv-fade flex-col gap-6">
-			{/* Header */}
+			{/* Static Header */}
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div>
-					<Skeleton className="h-9 w-48 bg-navy/10" />
-					<Skeleton className="mt-2 h-5 w-96 max-w-full bg-navy/5" />
+					<h1 className="page-title">{title}</h1>
+					<p className="page-description mt-1">{note}</p>
 				</div>
-				<Skeleton className="h-9 w-32 bg-navy/10" />
+				<Button variant="outline" size="sm" onClick={handleDownload}>
+					<Download className="size-4" />
+					Download CSV
+				</Button>
 			</div>
 
-			{/* Filters */}
+			{/* Static Filters */}
 			<div className="flex flex-wrap items-center gap-3">
-				{/* Search Bar */}
-				<Skeleton className="h-9 min-w-64 flex-1 bg-navy/5" />
-
-				{/* Type Pills */}
-				<div className="flex flex-wrap gap-1.5">
-					{Array.from({ length: 6 }).map((_, i) => (
-						// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton array
-						<Skeleton key={i} className="h-9 w-20 rounded-full bg-navy/5" />
-					))}
+				<div className="relative min-w-64 flex-1">
+					<Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy/40" />
+					<Input
+						type="search"
+						value={localSearch}
+						onChange={(e) => setLocalSearch(e.target.value)}
+						placeholder="Search name, phone, email, area or size..."
+						className="pl-9 bg-background"
+					/>
 				</div>
 
-				{/* Date Select */}
-				<Skeleton className="h-9 w-40 bg-navy/5" />
+				{searchParams.view === "all" && (
+					<div className="flex flex-wrap gap-1.5">
+						{TYPE_FILTERS.map((type) => {
+							const active = searchParams.typeFilter === type;
+							return (
+								<button
+									key={type}
+									type="button"
+									className={cn(
+										"rounded-full border px-3.5 py-2 text-xs font-medium transition-colors",
+										active
+											? "border-green bg-green/10 font-semibold text-green"
+											: "border-navy/15 bg-white text-navy/70 hover:bg-cream hover:text-navy",
+									)}
+									onClick={() =>
+										navigate({
+											search: (prev) => ({
+												...prev,
+												typeFilter: type,
+												page: 1,
+											}),
+										})
+									}
+								>
+									{type === "All types"
+										? "All"
+										: type === "Career"
+											? "Careers"
+											: `${type}s`}
+								</button>
+							);
+						})}
+					</div>
+				)}
+
+				<Select
+					value={searchParams.date}
+					onValueChange={(val) =>
+						val &&
+						navigate({ search: (prev) => ({ ...prev, date: val, page: 1 }) })
+					}
+				>
+					<SelectTrigger className="w-40 bg-white">
+						<SelectValue placeholder="Select date" />
+					</SelectTrigger>
+					<SelectContent>
+						{DATE_OPTIONS.map((date) => (
+							<SelectItem key={date} value={date}>
+								{date}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+
+				{filtersActive && (
+					<Button variant="ghost" size="sm" onClick={clearFilters}>
+						Clear filters
+					</Button>
+				)}
 			</div>
 
-			{/* Table Card */}
-			<Card className="overflow-hidden border-navy/10 shadow-xs">
-				<Table>
-					<TableHeader className="bg-muted/40">
-						<TableRow>
-							{["Type", "Name", "Contact", "Summary", "Received"].map(
-								(header) => (
-									<TableHead key={header} className="py-3">
-										<Skeleton className="h-4 w-20 bg-navy/10" />
-									</TableHead>
-								),
-							)}
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{Array.from({ length: 10 }).map((_, i) => (
-							// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton array
-							<TableRow key={i}>
-								<TableCell className="py-3.5">
-									<Skeleton className="h-6 w-20 rounded-full bg-navy/10" />
-								</TableCell>
-								<TableCell className="py-3.5">
-									<div className="flex flex-col gap-1.5">
-										<Skeleton className="h-4 w-32 bg-navy/10" />
-										<Skeleton className="h-3 w-48 bg-navy/5" />
-									</div>
-								</TableCell>
-								<TableCell className="py-3.5">
-									<Skeleton className="h-4 w-32 bg-navy/5" />
-								</TableCell>
-								<TableCell className="py-3.5">
-									<Skeleton className="h-4 w-40 bg-navy/5" />
-								</TableCell>
-								<TableCell className="py-3.5">
-									<Skeleton className="h-4 w-24 bg-navy/5" />
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-
-				{/* Pagination Footer */}
-				<div className="flex items-center justify-between border-t border-navy/10 bg-white/50 px-4 py-3">
-					<Skeleton className="h-4 w-48 bg-navy/5" />
-					<div className="flex items-center space-x-2">
-						<Skeleton className="h-8 w-20 bg-navy/10" />
-						<Skeleton className="h-8 w-20 bg-navy/10" />
-					</div>
-				</div>
-			</Card>
+			{/* Suspended Table Area */}
+			<AsyncBoundary
+				errorTitle="Failed to load enquiries"
+				fallback={<EnquiriesTableSkeleton />}
+			>
+				<EnquiryTableContent searchParams={searchParams} />
+			</AsyncBoundary>
 		</div>
 	);
 }
