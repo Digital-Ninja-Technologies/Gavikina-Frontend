@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProtectedIndexRouteImport } from './routes/_protected/index'
+import { Route as ProtectedEnquiriesIndexRouteImport } from './routes/_protected/enquiries/index'
+import { Route as ProtectedEnquiriesIdRouteImport } from './routes/_protected/enquiries/$id'
 
 const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
   id: '/_protected',
@@ -27,27 +29,49 @@ const ProtectedIndexRoute = ProtectedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
+const ProtectedEnquiriesIndexRoute = ProtectedEnquiriesIndexRouteImport.update({
+  id: '/enquiries/',
+  path: '/enquiries/',
+  getParentRoute: () => ProtectedRouteRoute,
+} as any)
+const ProtectedEnquiriesIdRoute = ProtectedEnquiriesIdRouteImport.update({
+  id: '/enquiries/$id',
+  path: '/enquiries/$id',
+  getParentRoute: () => ProtectedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof ProtectedIndexRoute
   '/login': typeof LoginRoute
+  '/enquiries/$id': typeof ProtectedEnquiriesIdRoute
+  '/enquiries/': typeof ProtectedEnquiriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/': typeof ProtectedIndexRoute
+  '/enquiries/$id': typeof ProtectedEnquiriesIdRoute
+  '/enquiries': typeof ProtectedEnquiriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_protected': typeof ProtectedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/_protected/': typeof ProtectedIndexRoute
+  '/_protected/enquiries/$id': typeof ProtectedEnquiriesIdRoute
+  '/_protected/enquiries/': typeof ProtectedEnquiriesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths: '/' | '/login' | '/enquiries/$id' | '/enquiries/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/'
-  id: '__root__' | '/_protected' | '/login' | '/_protected/'
+  to: '/login' | '/' | '/enquiries/$id' | '/enquiries'
+  id:
+    | '__root__'
+    | '/_protected'
+    | '/login'
+    | '/_protected/'
+    | '/_protected/enquiries/$id'
+    | '/_protected/enquiries/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -78,15 +102,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedIndexRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
+    '/_protected/enquiries/': {
+      id: '/_protected/enquiries/'
+      path: '/enquiries'
+      fullPath: '/enquiries/'
+      preLoaderRoute: typeof ProtectedEnquiriesIndexRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/enquiries/$id': {
+      id: '/_protected/enquiries/$id'
+      path: '/enquiries/$id'
+      fullPath: '/enquiries/$id'
+      preLoaderRoute: typeof ProtectedEnquiriesIdRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
   }
 }
 
 interface ProtectedRouteRouteChildren {
   ProtectedIndexRoute: typeof ProtectedIndexRoute
+  ProtectedEnquiriesIdRoute: typeof ProtectedEnquiriesIdRoute
+  ProtectedEnquiriesIndexRoute: typeof ProtectedEnquiriesIndexRoute
 }
 
 const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedIndexRoute: ProtectedIndexRoute,
+  ProtectedEnquiriesIdRoute: ProtectedEnquiriesIdRoute,
+  ProtectedEnquiriesIndexRoute: ProtectedEnquiriesIndexRoute,
 }
 
 const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(

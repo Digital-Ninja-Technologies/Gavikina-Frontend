@@ -32,6 +32,8 @@ import { NavUser, NavUserSkeleton } from "./nav-user";
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 	const location = useLocation();
 
+	const searchParams = location.search as { view?: string };
+
 	const {
 		data: stats,
 		isPending,
@@ -42,7 +44,8 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 		label: string;
 		items: {
 			title: string;
-			url: string;
+			to: string;
+			search?: Record<string, unknown>;
 			icon: LucideIcon;
 			isActive: boolean;
 			hasBadge?: boolean;
@@ -54,7 +57,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 			items: [
 				{
 					title: "Overview",
-					url: "/",
+					to: "/",
 					icon: LayoutDashboard,
 					isActive: location.pathname === "/",
 				},
@@ -65,51 +68,69 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 			items: [
 				{
 					title: "All Enquiries",
-					url: "/enquiries/all",
+					to: "/enquiries",
+					search: { view: "all" },
 					icon: Inbox,
-					isActive: location.pathname === "/enquiries/all",
+					isActive:
+						location.pathname === "/enquiries" &&
+						(!searchParams.view || searchParams.view === "all"),
 					hasBadge: true,
 					badgeValue: stats?.totalEnquiries || 0,
 				},
 				{
 					title: "Customers",
-					url: "/enquiries/customers",
+					to: "/enquiries",
+					search: { view: "customers" },
 					icon: Users,
-					isActive: location.pathname === "/enquiries/customers",
+					isActive:
+						location.pathname === "/enquiries" &&
+						searchParams.view === "customers",
 					hasBadge: true,
 					badgeValue: stats?.typeCounts?.customer || 0,
 				},
 				{
 					title: "Agents",
-					url: "/enquiries/agents",
+					to: "/enquiries",
+					search: { view: "agents" },
 					icon: UserPlus,
-					isActive: location.pathname === "/enquiries/agents",
+					isActive:
+						location.pathname === "/enquiries" &&
+						searchParams.view === "agents",
 					hasBadge: true,
 					badgeValue: stats?.typeCounts?.agent || 0,
 				},
 				{
 					title: "Investors",
-					url: "/enquiries/investors",
+					to: "/enquiries",
+					search: { view: "investors" },
 					icon: Briefcase,
-					isActive: location.pathname === "/enquiries/investors",
+					isActive:
+						location.pathname === "/enquiries" &&
+						searchParams.view === "investors",
 					hasBadge: true,
 					badgeValue: stats?.typeCounts?.investor || 0,
 				},
 				{
 					title: "Job Applications",
-					url: "/enquiries/careers",
+					to: "/enquiries",
+					search: { view: "careers" },
 					icon: FolderOpen,
-					isActive: location.pathname === "/enquiries/careers",
+					isActive:
+						location.pathname === "/enquiries" &&
+						searchParams.view === "careers",
 					hasBadge: true,
 					badgeValue: stats?.typeCounts?.careers || 0,
 				},
 				{
 					title: "Abandoned",
-					url: "/enquiries/abandoned",
+					to: "/enquiries",
+					search: { view: "abandoned" },
 					icon: XCircle,
-					isActive: location.pathname === "/enquiries/abandoned",
+					isActive:
+						location.pathname === "/enquiries" &&
+						searchParams.view === "abandoned",
 					hasBadge: true,
-					badgeValue: 0, // Standard logic: abandoned assessments don't use this endpoint
+					badgeValue: 0,
 				},
 			],
 		},
@@ -118,13 +139,13 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 			items: [
 				{
 					title: "Past Projects",
-					url: "/projects",
+					to: "/projects",
 					icon: FolderOpen,
 					isActive: location.pathname.includes("/projects"),
 				},
 				{
 					title: "Calculator Settings",
-					url: "/calculator-settings",
+					to: "/calculator-settings",
 					icon: Settings2,
 					isActive: location.pathname.includes("/calculator-settings"),
 				},
@@ -168,7 +189,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 													? "bg-white/12 text-white hover:bg-white/12"
 													: ""
 											}
-											render={<Link to={item.url} />}
+											render={<Link to={item.to} search={item.search} />}
 										>
 											<item.icon className="size-4" />
 											<span>{item.title}</span>
