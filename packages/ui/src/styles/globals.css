@@ -161,11 +161,11 @@
   }
 
   .page-title {
-    @apply font-heading text-2xl leading-tight font-bold tracking-tight md:text-3xl;
+    @apply font-heading text-2xl leading-tight font-semibold leading-snug tracking-tight md:text-3xl;
   }
 
   .page-description {
-    @apply max-w-prose text-base leading-relaxed text-pretty text-muted-foreground;
+    @apply max-w-prose text-base leading-loose text-pretty text-muted-foreground;
   }
 
   /* MARKETING PAGE SECTIONS */

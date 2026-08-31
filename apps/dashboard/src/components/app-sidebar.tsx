@@ -135,7 +135,6 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 						alt="Gavikina Energy"
 						className="block h-8 w-auto transition-all group-data-[collapsible=icon]:scale-0"
 					/>
-					{/* Show a fallback icon only when the sidebar collapses to icon-mode */}
 					<div className="absolute inset-0 flex items-center justify-center scale-0 opacity-0 transition-all group-data-[collapsible=icon]:scale-100 group-data-[collapsible=icon]:opacity-100">
 						<div className="flex size-8 items-center justify-center rounded-lg bg-green text-white font-bold">
 							G
@@ -156,7 +155,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 									<SidebarMenuItem key={item.title}>
 										<SidebarMenuButton
 											isActive={item.isActive}
-                      tooltip={item.title}
+											tooltip={item.title}
 											size={"lg"}
 											className={
 												item.isActive
