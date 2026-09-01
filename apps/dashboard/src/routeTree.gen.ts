@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProtectedIndexRouteImport } from './routes/_protected/index'
+import { Route as ProtectedCalculatorSettingsRouteImport } from './routes/_protected/calculator-settings'
 import { Route as ProtectedProjectsRouteImport } from './routes/_protected/projects'
 import { Route as ProtectedEnquiriesIndexRouteImport } from './routes/_protected/enquiries/index'
 import { Route as ProtectedEnquiriesIdRouteImport } from './routes/_protected/enquiries/$id'
@@ -30,6 +31,12 @@ const ProtectedIndexRoute = ProtectedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
+const ProtectedCalculatorSettingsRoute =
+  ProtectedCalculatorSettingsRouteImport.update({
+    id: '/calculator-settings',
+    path: '/calculator-settings',
+    getParentRoute: () => ProtectedRouteRoute,
+  } as any)
 const ProtectedProjectsRoute = ProtectedProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
@@ -49,12 +56,14 @@ const ProtectedEnquiriesIdRoute = ProtectedEnquiriesIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof ProtectedIndexRoute
   '/login': typeof LoginRoute
+  '/calculator-settings': typeof ProtectedCalculatorSettingsRoute
   '/projects': typeof ProtectedProjectsRoute
   '/enquiries/$id': typeof ProtectedEnquiriesIdRoute
   '/enquiries/': typeof ProtectedEnquiriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/calculator-settings': typeof ProtectedCalculatorSettingsRoute
   '/projects': typeof ProtectedProjectsRoute
   '/': typeof ProtectedIndexRoute
   '/enquiries/$id': typeof ProtectedEnquiriesIdRoute
@@ -64,6 +73,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_protected': typeof ProtectedRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/_protected/calculator-settings': typeof ProtectedCalculatorSettingsRoute
   '/_protected/projects': typeof ProtectedProjectsRoute
   '/_protected/': typeof ProtectedIndexRoute
   '/_protected/enquiries/$id': typeof ProtectedEnquiriesIdRoute
@@ -71,13 +81,26 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/projects' | '/enquiries/$id' | '/enquiries/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/calculator-settings'
+    | '/projects'
+    | '/enquiries/$id'
+    | '/enquiries/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/projects' | '/' | '/enquiries/$id' | '/enquiries'
+  to:
+    | '/login'
+    | '/calculator-settings'
+    | '/projects'
+    | '/'
+    | '/enquiries/$id'
+    | '/enquiries'
   id:
     | '__root__'
     | '/_protected'
     | '/login'
+    | '/_protected/calculator-settings'
     | '/_protected/projects'
     | '/_protected/'
     | '/_protected/enquiries/$id'
@@ -112,6 +135,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedIndexRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
+    '/_protected/calculator-settings': {
+      id: '/_protected/calculator-settings'
+      path: '/calculator-settings'
+      fullPath: '/calculator-settings'
+      preLoaderRoute: typeof ProtectedCalculatorSettingsRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
     '/_protected/projects': {
       id: '/_protected/projects'
       path: '/projects'
@@ -137,6 +167,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface ProtectedRouteRouteChildren {
+  ProtectedCalculatorSettingsRoute: typeof ProtectedCalculatorSettingsRoute
   ProtectedProjectsRoute: typeof ProtectedProjectsRoute
   ProtectedIndexRoute: typeof ProtectedIndexRoute
   ProtectedEnquiriesIdRoute: typeof ProtectedEnquiriesIdRoute
@@ -144,6 +175,7 @@ interface ProtectedRouteRouteChildren {
 }
 
 const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
+  ProtectedCalculatorSettingsRoute: ProtectedCalculatorSettingsRoute,
   ProtectedProjectsRoute: ProtectedProjectsRoute,
   ProtectedIndexRoute: ProtectedIndexRoute,
   ProtectedEnquiriesIdRoute: ProtectedEnquiriesIdRoute,

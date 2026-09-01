@@ -1,9 +1,11 @@
 import { createStore } from "@tanstack/react-store";
 
-export type DialogView = "PROJECT_FORM" | null;
+export type DialogView = "PROJECT_FORM" | "APPLIANCE_FORM" | "TIER_FORM" | null;
 
 export interface DialogData {
 	projectId?: string;
+	applianceId?: string;
+	tierId?: string;
 }
 
 interface DialogState {

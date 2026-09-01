@@ -190,7 +190,8 @@ export const enquiryDetailQueryOptions = (id: string, view: string) =>
 				const res = await getAssessmentById(id);
 				return mapToLead(res.data);
 			}
-			const res = await getEnquiryById(id);
+      const res = await getEnquiryById(id);
+			// console.log(res)
 			return mapToLead(res.data);
 		},
 	});

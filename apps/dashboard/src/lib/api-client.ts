@@ -52,6 +52,12 @@ export async function apiClient<T>(
 	}
 
 	if (!response.ok) {
+		// Intercept 401 Unauthorized globally
+		if (response.status === 401) {
+			localStorage.removeItem("admin_token");
+			window.location.assign("/login");
+		}
+
 		let errorData: unknown;
 		let errorMessage = `Request failed with status ${response.status}`;
 
@@ -63,7 +69,6 @@ export async function apiClient<T>(
 				if (errorData && typeof errorData === "object") {
 					const data = errorData as Record<string, unknown>;
 
-					// Handle Zod-style field/form validation errors
 					if (data.errors && typeof data.errors === "object") {
 						const errs = data.errors as {
 							formErrors?: string[];
@@ -87,9 +92,7 @@ export async function apiClient<T>(
 						} else if (data.message && typeof data.message === "string") {
 							errorMessage = data.message;
 						}
-					}
-					// Handle standard message errors
-					else if (data.message && typeof data.message === "string") {
+					} else if (data.message && typeof data.message === "string") {
 						errorMessage = data.message;
 					}
 				}

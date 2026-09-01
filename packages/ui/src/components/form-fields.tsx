@@ -259,6 +259,7 @@ interface FormSelectProps<T extends FieldValues> extends BaseFormProps<T> {
 	placeholder?: string;
 	options: { label: string; value: string }[];
 	className?: string;
+	disabled?: boolean;
 }
 
 export function FormSelect<T extends FieldValues>({
@@ -269,6 +270,7 @@ export function FormSelect<T extends FieldValues>({
 	options,
 	className,
 	description,
+	disabled,
 }: FormSelectProps<T>) {
 	const { field, fieldState } = useController({ name, control });
 
@@ -279,7 +281,7 @@ export function FormSelect<T extends FieldValues>({
 				name={field.name}
 				value={field.value ?? ""}
 				onValueChange={field.onChange}
-				disabled={field.disabled}
+				disabled={disabled ?? field.disabled}
 			>
 				<SelectTrigger
 					id={field.name}
@@ -300,7 +302,9 @@ export function FormSelect<T extends FieldValues>({
 			</Select>
 			<FieldError>{fieldState.error?.message}</FieldError>
 			{description && (
-				<FieldDescription className="text-xs">{description}</FieldDescription>
+				<FieldDescription>
+					{description}
+				</FieldDescription>
 			)}
 		</Field>
 	);
