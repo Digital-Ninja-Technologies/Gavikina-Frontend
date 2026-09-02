@@ -25,6 +25,8 @@ function mapToLead(apiItem: any): Lead {
 			when: apiItem.updatedAt || apiItem.createdAt,
 			completed: false,
 			property: apiItem.propertyType || d.propertyType,
+			inspection:
+				apiItem.requestSiteInspection || d.requestSiteInspection || false,
 			// FIX: Check both the root and details object for 'reason'
 			reason: apiItem.reason || d.reason,
 			backup:
@@ -33,6 +35,7 @@ function mapToLead(apiItem: any): Lead {
 					: undefined,
 			fuel: apiItem.fuelSpend || d.fuelSpend,
 			size: apiItem.recommendation?.tier || d.preferredTier,
+			ai: apiItem?.recommendation?.aiNote,
 			price: apiItem.recommendation
 				? `₦${apiItem.recommendation.priceMin.toLocaleString()} - ₦${apiItem.recommendation.priceMax.toLocaleString()}`
 				: undefined,
@@ -51,7 +54,7 @@ function mapToLead(apiItem: any): Lead {
 		phone: apiItem.phone,
 		message: apiItem.message,
 		when: apiItem.createdAt,
-		ai: apiItem.notes?.join("\n"),
+		ai: apiItem?.details?.aiNote || apiItem.notes?.join("\n"),
 	};
 
 	let leadType: LeadType = "Contact";
@@ -64,7 +67,7 @@ function mapToLead(apiItem: any): Lead {
 			lead.backup = d.backupHours ? `${d.backupHours} hours` : undefined;
 			lead.payment = d.paymentPreference;
 			lead.completed = true;
-			// FIX: Ensure reason is mapped for completed customers
+			lead.price = d.priceRange.formatted;
 			lead.reason = d.reason || apiItem.reason;
 			if (d.appliances) {
 				lead.appliances = d.appliances.map((a: any) => [
@@ -157,7 +160,17 @@ export const enquiriesListQueryOptions = (params: EnquiriesSearch) =>
 
 			if (params.view === "abandoned") {
 				const res = await getAbandonedAssessments(apiParams);
-				return { data: res.data.map(mapToLead), meta: res.meta };
+				return {
+					data: res.data.map(mapToLead),
+					meta: res.meta || {
+						// @ts-expect-error
+						total: res?.total,
+						// @ts-expect-error
+						page: res?.page,
+						// @ts-expect-error
+						limit: res?.limit,
+					},
+				};
 			}
 
 			let typeParam = params.view;
@@ -190,8 +203,8 @@ export const enquiryDetailQueryOptions = (id: string, view: string) =>
 				const res = await getAssessmentById(id);
 				return mapToLead(res.data);
 			}
-      const res = await getEnquiryById(id);
-			// console.log(res)
+			const res = await getEnquiryById(id);
+			console.log(res);
 			return mapToLead(res.data);
 		},
 	});

@@ -7,7 +7,7 @@ import { assessmentActions, assessmentStore } from "../store";
 
 export default function StepPayment() {
 	const payment = useSelector(assessmentStore, (s) => s.payment);
-	const inspection = useSelector(assessmentStore, (s) => s.inspection);
+	const inspection = useSelector(assessmentStore, (s) => s.requestSiteInspection);
 
 	return (
 		<div className="flex h-full min-w-0 flex-col justify-between animate-gv-fade">
@@ -45,7 +45,7 @@ export default function StepPayment() {
 						id="inspection"
 						checked={inspection}
 						onCheckedChange={(checked) =>
-							assessmentActions.updateField("inspection", !!checked)
+							assessmentActions.updateField("requestSiteInspection", !!checked)
 						}
 						className="mt-0.5"
 					/>

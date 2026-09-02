@@ -52,7 +52,7 @@ export default function StepReason() {
 	};
 
 	return (
-		<div className="flex h-full flex-col justify-between animate-gv-fade">
+		<div className="flex h-full animate-gv-fade flex-col justify-between">
 			<div>
 				<h3 className="text-2xl font-semibold tracking-tight text-navy sm:text-3xl">
 					Why are you considering solar?
@@ -75,7 +75,7 @@ export default function StepReason() {
 								className={cn(
 									"flex items-center justify-between rounded-xl border px-5 py-3.5 text-left text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-70",
 									isSelected
-										? "border-green bg-green/5 text-navy font-semibold"
+										? "border-green bg-green/5 font-semibold text-navy"
 										: "border-navy/10 bg-white text-navy/80 hover:border-navy/20",
 								)}
 								onClick={() => selectOption(o.id)}

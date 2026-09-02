@@ -34,7 +34,7 @@ export async function getRecommendedSizes(startDate: string, endDate: string) {
 
 // Cheaply fetch the total count of completed/abandoned assessments by requesting 1 item
 export async function getAssessmentCount(type: "completed" | "abandoned") {
-	return apiClient<ApiResponse<unknown> & { meta: { total: number } }>(
-		`/assessment/admin/${type}?limit=1`,
-	);
+	return apiClient<
+		ApiResponse<unknown> & { total?: number; meta?: { total: number } }
+	>(`/assessment/admin/${type}?limit=1`);
 }

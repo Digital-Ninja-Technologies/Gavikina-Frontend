@@ -64,7 +64,7 @@ function OverviewContent({
 	const { stats, received, sizes, assessments } = data;
 
 	const statCards = useMemo(() => {
-		const totalAssessments = assessments.completed + assessments.abandoned;
+		const totalAssessments = assessments?.completed + assessments?.abandoned;
 		const completionRate = totalAssessments
 			? Math.round((assessments.completed / totalAssessments) * 100)
 			: 0;

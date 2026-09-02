@@ -2,8 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useSelector } from "@tanstack/react-store";
 import { fmt } from "@workspace/engine";
-import { Button, buttonVariants } from "@workspace/ui/components/button";
-import { DialogClose } from "@workspace/ui/components/dialog";
+import { Button } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -70,7 +69,7 @@ export default function StepRecommendation() {
 
 	if (isPending) {
 		return (
-			<div className="flex h-full flex-col justify-between animate-gv-fade">
+			<div className="flex h-full animate-gv-fade flex-col justify-between">
 				<div className="flex flex-1 flex-col items-center justify-center text-center">
 					<Loader2 className="mb-4 size-8 animate-spin text-green" />
 					<h3 className="text-xl font-semibold tracking-tight text-navy">
@@ -95,9 +94,9 @@ export default function StepRecommendation() {
 		};
 
 		return (
-			<div className="flex h-full min-w-0 flex-col justify-between animate-gv-fade">
+			<div className="flex h-full min-w-0 animate-gv-fade flex-col justify-between">
 				<div>
-					<span className="text-xs font-semibold uppercase tracking-wider text-amber">
+					<span className="text-xs font-semibold tracking-wider text-amber uppercase">
 						{isCustomSize ? "Custom Solution Required" : "Calculation Error"}
 					</span>
 
@@ -158,17 +157,17 @@ export default function StepRecommendation() {
 	];
 
 	return (
-		<div className="flex h-full min-w-0 flex-col justify-between animate-gv-fade">
+		<div className="flex h-full min-w-0 animate-gv-fade flex-col justify-between">
 			<div>
-				<span className="text-xs font-semibold uppercase tracking-wider text-green">
+				<span className="text-xs font-semibold tracking-wider text-green uppercase">
 					Your recommendation
 				</span>
 
 				<div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<div className="relative overflow-hidden rounded-2xl bg-ink p-6 text-white shadow-xs">
-						<div className="pointer-events-none absolute -right-8 -top-8 size-32 rounded-full bg-[radial-gradient(circle_at_35%_30%,rgba(245,166,35,0.35),rgba(245,166,35,0)_70%)]" />
+						<div className="pointer-events-none absolute -top-8 -right-8 size-32 rounded-full bg-[radial-gradient(circle_at_35%_30%,rgba(245,166,35,0.35),rgba(245,166,35,0)_70%)]" />
 						<div className="relative">
-							<span className="text-xs font-semibold uppercase tracking-wider text-white/50">
+							<span className="text-xs font-semibold tracking-wider text-white/50 uppercase">
 								System size
 							</span>
 							<div className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -180,7 +179,7 @@ export default function StepRecommendation() {
 							</p>
 
 							<div className="mt-4 border-t border-white/10 pt-4">
-								<span className="text-xs font-semibold uppercase tracking-wider text-white/50">
+								<span className="text-xs font-semibold tracking-wider text-white/50 uppercase">
 									Indicative price
 								</span>
 								<div className="mt-1 text-xl font-semibold text-amber sm:text-2xl">
@@ -191,7 +190,7 @@ export default function StepRecommendation() {
 					</div>
 
 					<div className="rounded-2xl border border-navy/10 bg-cream p-6">
-						<span className="text-xs font-semibold uppercase tracking-wider text-navy/50">
+						<span className="text-xs font-semibold tracking-wider text-navy/50 uppercase">
 							Against your fuel spend
 						</span>
 						<div className="mt-4 flex flex-col gap-3">
@@ -217,7 +216,7 @@ export default function StepRecommendation() {
 						<span className="flex size-5 items-center justify-center rounded-md bg-green text-xs font-bold text-white">
 							G
 						</span>
-						<span className="text-xs font-semibold uppercase tracking-wider text-green-dark">
+						<span className="text-xs font-semibold tracking-wider text-green-dark uppercase">
 							What this means for you
 						</span>
 					</div>

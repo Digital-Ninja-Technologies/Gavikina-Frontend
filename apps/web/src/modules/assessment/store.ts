@@ -11,7 +11,7 @@ export interface AssessmentState {
 	fuelSpend: number;
 	contact: { name: string; phone: string; email: string };
 	payment: string | null;
-	inspection: boolean;
+	requestSiteInspection: boolean;
 	done: boolean;
 }
 
@@ -27,7 +27,7 @@ const initialState: AssessmentState = {
 	fuelSpend: 60000, // Default
 	contact: { name: "", phone: "", email: "" },
 	payment: null,
-	inspection: true,
+	requestSiteInspection: true,
 	done: false,
 };
 

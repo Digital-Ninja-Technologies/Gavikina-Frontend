@@ -16,7 +16,7 @@ const enquiryDetailSearchSchema = z.object({
 export const Route = createFileRoute("/_protected/enquiries/$id")({
 	validateSearch: (search) => enquiryDetailSearchSchema.parse(search),
 	beforeLoad: async ({ context, params, search }) => {
-		await context.queryClient.query(
+		void context.queryClient.query(
 			enquiryDetailQueryOptions(params.id, search.view),
 		);
 	},

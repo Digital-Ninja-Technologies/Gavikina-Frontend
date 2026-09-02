@@ -42,8 +42,8 @@ export const dashboardOverviewQueryOptions = (params: {
 				received: received.data,
 				sizes: sizes.data,
 				assessments: {
-					completed: completed.meta.total,
-					abandoned: abandoned.meta.total,
+					completed: completed?.meta?.total || completed?.total || 0,
+					abandoned: abandoned?.meta?.total || abandoned?.total || 0,
 				},
 			};
 		},

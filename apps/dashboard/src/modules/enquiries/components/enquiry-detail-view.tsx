@@ -9,7 +9,16 @@ import {
 } from "@workspace/ui/components/card";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { cn } from "@workspace/ui/lib/utils";
-import { Download, FileText, Mail, Phone } from "lucide-react";
+import {
+	Bot,
+	Download,
+	FileText,
+	Info,
+	Mail,
+	Phone,
+	Sparkles,
+	Zap,
+} from "lucide-react";
 import type { Lead } from "#/lib/data";
 import { naira } from "#/lib/data";
 import { csvFor, download } from "#/lib/utils";
@@ -95,9 +104,9 @@ export function EnquiryDetailContent({
 	const detailMeta =
 		open.type === "Customer"
 			? open.completed
-				? `Completed assessment · ${new Date(open.when).toLocaleString("en-GB")}`
-				: `Abandoned assessment · last activity ${new Date(open.when).toLocaleString("en-GB")}`
-			: `${open.type} enquiry · ${new Date(open.when).toLocaleString("en-GB")}`;
+				? `Completed assessment · ${new Date(open.when).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}`
+				: `Abandoned assessment · last activity ${new Date(open.when).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}`
+			: `${open.type} enquiry · ${new Date(open.when).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}`;
 
 	const phoneHref = open.phone ? `tel:${open.phone.replace(/\s/g, "")}` : "#";
 	const mailTarget =
@@ -111,117 +120,191 @@ export function EnquiryDetailContent({
 
 	return (
 		<div className="flex flex-col gap-6 animate-gv-fade">
+			{/* Header Section */}
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 				<div>
-					<Badge variant="outline" className="text-xs font-semibold">
+					<Badge
+						variant="outline"
+						className={cn(
+							"text-xs font-semibold",
+							open.type === "Customer" &&
+								"bg-green/10 text-green border-green/20",
+							open.type === "Agent" &&
+								"bg-amber/15 text-amber-700 border-amber/30",
+							open.type === "Career" &&
+								"bg-purple-100 text-purple-700 border-purple-200",
+						)}
+					>
 						{open.type}
 					</Badge>
 					<h1 className="page-title mt-2">{open.name}</h1>
-					<p className="text-xs text-navy/60 sm:text-sm mt-1">{detailMeta}</p>
+					<p className="mt-1.5 text-xs text-navy/60 sm:text-sm">{detailMeta}</p>
 				</div>
 				<Button
 					variant="outline"
 					size="sm"
+					className="w-full sm:w-auto"
 					onClick={() => download(`gavikina-${open.id}.csv`, csvFor([open]))}
 				>
-					<Download className="size-4" /> Download CSV
+					<Download /> Download CSV
 				</Button>
 			</div>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.6fr_1fr]">
+				{/* Main Content Column */}
 				<div className="flex flex-col gap-6">
+					{/* Customer Sizing Metrics */}
 					{open.type === "Customer" && (
-						<div className="grid grid-cols-1 gap-4 rounded-2xl border border-navy/10 bg-white p-6 sm:grid-cols-3">
-							<div>
-								<span className="text-xs font-semibold uppercase tracking-wider text-navy/50">
-									Calculated size
-								</span>
-								<div className="mt-1 text-2xl font-semibold tracking-tight text-navy sm:text-3xl">
-									{open.size}
-								</div>
-							</div>
-							<div>
-								<span className="text-xs font-semibold uppercase tracking-wider text-navy/50">
-									Price range
-								</span>
-								<div className="mt-1 text-lg font-semibold tracking-tight text-amber">
-									{open.price}
-								</div>
-							</div>
-							<div>
-								<span className="text-xs font-semibold uppercase tracking-wider text-navy/50">
-									Fuel spend
-								</span>
-								<div className="mt-1 text-lg font-semibold tracking-tight text-navy">
-									{open.fuel ? `${naira(open.fuel)} / mo` : "Not reached"}
-								</div>
-							</div>
+						<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+							<Card className="border-navy/10 bg-cream/40 shadow-xs p-0">
+								<CardContent className="p-5">
+									<span className="text-xs font-semibold uppercase tracking-wider text-navy/50">
+										Calculated size
+									</span>
+									<div className="mt-1.5 text-2xl font-semibold tracking-tight text-navy">
+										{open.size}
+									</div>
+								</CardContent>
+							</Card>
+							<Card className="border-navy/10 bg-white shadow-xs p-0">
+								<CardContent className="p-5">
+									<span className="text-xs font-semibold uppercase tracking-wider text-navy/50">
+										Price range
+									</span>
+									<div className="mt-1.5 text-lg font-semibold tracking-tight text-amber">
+										{open.price}
+									</div>
+								</CardContent>
+							</Card>
+							<Card className="border-navy/10 bg-white shadow-xs p-0">
+								<CardContent className="p-5">
+									<span className="text-xs font-semibold uppercase tracking-wider text-navy/50">
+										Fuel spend
+									</span>
+									<div className="mt-1.5 text-lg font-semibold tracking-tight text-navy">
+										{open.fuel ? `${naira(open.fuel)} / mo` : "Not reached"}
+									</div>
+								</CardContent>
+							</Card>
 						</div>
 					)}
 
+					{/* Primary Details Table */}
 					<Card className="border-navy/10 shadow-xs">
+						<CardHeader className="border-b border-navy/5 bg-muted/20">
+							<div className="flex items-center gap-2">
+								<Info className="size-4 text-navy/60" />
+								<CardTitle className=" font-semibold text-navy">
+									Enquiry Details
+								</CardTitle>
+							</div>
+						</CardHeader>
 						<CardContent className="p-0">
-							{detailFields.map(([label, value], i) => (
-								<div
-									key={label}
-									className={cn(
-										"flex flex-wrap items-baseline justify-between gap-3 px-6 py-3.5",
-										i > 0 && "border-t border-navy/10",
-									)}
-								>
-									<span className="text-xs text-navy/60">{label}</span>
-									<span className="max-w-md text-right text-sm font-medium text-navy">
-										{value}
-									</span>
-								</div>
-							))}
+							<dl className="divide-y divide-navy/5">
+								{detailFields.map(([label, value]) => (
+									<div
+										key={label}
+										className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 hover:bg-cream/20 transition-colors"
+									>
+										<dt className="text-xs font-medium text-navy/60 sm:w-1/3 shrink-0">
+											{label}
+										</dt>
+										<dd className="text-sm font-medium text-navy sm:text-right">
+											{label === "Property type" && value ? (
+												<Badge
+													variant="outline"
+													className="capitalize border-navy/20 text-navy/70"
+												>
+													{value}
+												</Badge>
+											) : label.includes("system power") &&
+												value !== "Not reached" ? (
+												<div className="flex flex-wrap gap-1.5 sm:justify-end">
+													{value.split(",").map((v) => {
+														const clean = v.trim();
+														if (!clean) return null;
+														return (
+															<Badge
+																key={clean}
+																variant="secondary"
+																className="bg-navy/5 text-navy/80 font-normal hover:bg-navy/10"
+															>
+																{clean}
+															</Badge>
+														);
+													})}
+												</div>
+											) : (
+												value
+											)}
+										</dd>
+									</div>
+								))}
+							</dl>
 						</CardContent>
 					</Card>
 
+					{/* CV Attachment Block */}
 					{open.cv && (
-						<div className="flex items-center gap-4 rounded-2xl border border-navy/10 bg-white p-5">
-							<span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-cream text-navy">
-								<FileText className="size-5" />
-							</span>
-							<div className="flex min-w-0 flex-1 flex-col">
-								<span className="truncate text-sm font-medium text-navy">
-									{open.cv}
+						<div className="flex flex-col gap-4 rounded-2xl border border-navy/10 bg-white p-5 shadow-xs sm:flex-row sm:items-center sm:justify-between">
+							<div className="flex items-center gap-4">
+								<span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-navy/5 text-navy">
+									<FileText className="size-5" />
 								</span>
-								<span className="text-xs text-navy/50">
-									CV attachment · {open.cvSize}
-								</span>
+								<div className="flex min-w-0 flex-col">
+									<span className="truncate text-sm font-semibold text-navy">
+										{open.cv}
+									</span>
+									<span className="text-xs text-navy/50 mt-0.5">
+										CV attachment · {open.cvSize}
+									</span>
+								</div>
 							</div>
-							<Button size="sm" onClick={downloadCv}>
-								Download CV
+							<Button
+								size="sm"
+								onClick={downloadCv}
+								className="w-full sm:w-auto"
+							>
+								<Download className="size-4" /> Download CV
 							</Button>
 						</div>
 					)}
 
+					{/* Appliance Selections Block */}
 					{open.appliances && open.appliances.length > 0 && (
 						<Card className="border-navy/10 shadow-xs">
-							<CardHeader className="pb-3">
-								<CardTitle className="text-base font-semibold text-navy">
-									Appliances selected
-								</CardTitle>
+							<CardHeader className="border-b border-navy/5 bg-muted/20">
+								<div className="flex items-center gap-2">
+									<Zap className="size-4 text-amber" />
+									<CardTitle className="text-sm font-semibold text-navy">
+										Appliances Selected
+									</CardTitle>
+								</div>
 							</CardHeader>
-							<CardContent className="flex flex-col gap-2">
-								{open.appliances.map((a) => (
-									<div
-										key={a[0]}
-										className="flex items-center justify-between border-b border-navy/5 pb-2 text-sm last:border-b-0"
-									>
-										<span className="text-navy">{a[0]}</span>
-										<div className="flex items-center gap-4">
-											<span className="text-xs text-navy/50">× {a[1]}</span>
-											<span className="w-20 text-right tabular-nums font-medium text-navy">
-												{a[2].toLocaleString()}W
-											</span>
-										</div>
-									</div>
-								))}
-								<div className="mt-2 flex justify-between border-t border-navy/10 pt-3 text-sm font-semibold text-navy">
-									<span>Total load</span>
-									<span className="tabular-nums">
+							<CardContent className="pt-4">
+								<ul className="flex flex-col gap-3">
+									{open.appliances.map((a) => (
+										<li
+											key={a[0]}
+											className="flex items-center justify-between border-b border-navy/5 pb-3 text-sm last:border-b-0 last:pb-0"
+										>
+											<span className="font-medium text-navy">{a[0]}</span>
+											<div className="flex items-center gap-5">
+												<span className="text-xs font-semibold text-navy/50 bg-muted px-2 py-0.5 rounded-md">
+													× {a[1]}
+												</span>
+												<span className="w-16 text-right tabular-nums font-semibold text-navy">
+													{a[2].toLocaleString()}W
+												</span>
+											</div>
+										</li>
+									))}
+								</ul>
+								<div className="mt-4 flex items-center justify-between rounded-xl bg-cream/50 p-4 border border-navy/5">
+									<span className="text-sm font-semibold text-navy">
+										Total load
+									</span>
+									<span className="text-base font-bold tabular-nums text-green">
 										{totalWatts.toLocaleString()}W
 									</span>
 								</div>
@@ -230,48 +313,69 @@ export function EnquiryDetailContent({
 					)}
 				</div>
 
+				{/* Sidebar Column */}
 				<div className="flex flex-col gap-6">
+					{/* AI Insights Card */}
 					{open.ai && (
-						<div className="rounded-2xl border border-green/30 bg-green/5 p-6">
-							<span className="text-xs font-semibold uppercase tracking-wider text-green-dark">
-								{open.type === "Agent"
-									? "AI first read shown to applicant"
-									: "AI note shown to customer"}
-							</span>
-							<p className="mt-2 text-sm leading-relaxed text-navy">
-								{open.ai}
-							</p>
-						</div>
+						<Card className="border-green/20 bg-[#F5F9F4] shadow-xs gap-4">
+							<CardHeader className="flex items-center gap-2">
+								<Bot className="size-4 text-green" />
+								<span className="text-xs font-bold uppercase tracking-wider text-green-dark">
+									{open.type === "Agent"
+										? "AI first read shown to applicant"
+										: open.type === "Customer"
+											? "AI note shown to customer"
+											: "Note"}
+								</span>
+							</CardHeader>
+							<CardContent>
+								<p className="text-sm leading-loose font-light italic text-navy">{open.ai}</p>
+							</CardContent>
+						</Card>
 					)}
 
+					{/* Action Status Card */}
 					<Card className="border-navy/10 shadow-xs">
-						<CardHeader className="pb-2">
-							<CardTitle className="text-base font-semibold text-navy">
-								Status
+						<CardHeader className="pb-3 border-b border-navy/5 bg-muted/20">
+							<CardTitle className="text-sm font-semibold text-navy">
+								Action &amp; Status
 							</CardTitle>
 						</CardHeader>
-						<CardContent className="flex flex-col gap-4">
-							<p className="text-xs leading-relaxed text-navy/70">
-								{statusNote}
-							</p>
-							<div className="flex flex-col gap-2">
+						<CardContent className="flex flex-col gap-5">
+							<div className="flex items-start gap-2.5">
+								<div className="mt-0.5">
+									{open.phone || open.email || open.contact ? (
+										<Info className="size-4 text-amber" />
+									) : (
+										<Info className="size-4 text-navy/40" />
+									)}
+								</div>
+								<p className="text-xs leading-relaxed text-navy/70">
+									{statusNote}
+								</p>
+							</div>
+
+							<div className="flex flex-col gap-2.5 border-t border-navy/5">
 								<Button
 									nativeButton={false}
-									size="sm"
-									className="w-full"
+									size="default"
+									className="w-full justify-start gap-3"
+									disabled={!!open.phone}
 									render={<a href={phoneHref} />}
 								>
-									<Phone className="size-4" /> Call{" "}
-									{open.phone || "unavailable"}
+									<Phone className="size-4 opacity-70" />
+									<span>Call {open.phone || "unavailable"}</span>
 								</Button>
 								<Button
 									variant="outline"
-									size="sm"
-									className="w-full"
+									size="default"
+									className="w-full justify-start gap-3"
 									nativeButton={false}
+									disabled={!!open.email}
 									render={<a href={mailHref} />}
 								>
-									<Mail className="size-4" /> Send an email
+									<Mail className="size-4 opacity-70" />
+									<span>Send an email</span>
 								</Button>
 							</div>
 						</CardContent>
@@ -289,10 +393,10 @@ export function EnquiryDetailContent({
 export function EnquiryDetailSkeleton() {
 	return (
 		<div className="flex flex-col gap-6 animate-gv-fade mt-6">
-			{/* Header area */}
+			{/* Header Area */}
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-				<div className="space-y-2">
-					<Skeleton className="h-5 w-20 rounded-full bg-navy/10" />
+				<div className="space-y-3">
+					<Skeleton className="h-5 w-20 rounded-md bg-navy/10" />
 					<Skeleton className="h-9 w-64 bg-navy/10" />
 					<Skeleton className="h-4 w-48 bg-navy/5" />
 				</div>
@@ -302,36 +406,49 @@ export function EnquiryDetailSkeleton() {
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.6fr_1fr]">
 				{/* Main Column */}
 				<div className="flex flex-col gap-6">
+					{/* Metric Cards Skeleton */}
+					<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+						{Array.from({ length: 3 }).map((_, i) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton layout
+							<Skeleton key={i} className="h-24 w-full rounded-xl bg-navy/5" />
+						))}
+					</div>
+
+					{/* List Details Skeleton */}
 					<Card className="border-navy/10 shadow-xs">
+						<CardHeader className="border-b border-navy/5 bg-muted/20 pb-4">
+							<Skeleton className="h-5 w-32 bg-navy/10" />
+						</CardHeader>
 						<CardContent className="p-0">
-							{Array.from({ length: 6 }).map((_, i) => (
-								<div
-									// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton
-									key={i}
-									className={cn(
-										"flex items-center justify-between px-6 py-4",
-										i > 0 && "border-t border-navy/10",
-									)}
-								>
-									<Skeleton className="h-4 w-32 bg-navy/10" />
-									<Skeleton className="h-4 w-48 bg-navy/5" />
-								</div>
-							))}
+							<div className="divide-y divide-navy/5">
+								{Array.from({ length: 6 }).map((_, i) => (
+									<div
+										// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton layout
+										key={i}
+										className="flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+									>
+										<Skeleton className="h-4 w-1/4 bg-navy/10" />
+										<Skeleton className="h-4 w-2/5 bg-navy/5" />
+									</div>
+								))}
+							</div>
 						</CardContent>
 					</Card>
 				</div>
 
-				{/* Sidebar */}
+				{/* Sidebar Column */}
 				<div className="flex flex-col gap-6">
+					<Skeleton className="h-32 w-full rounded-2xl bg-green/10" />
+
 					<Card className="border-navy/10 shadow-xs">
-						<CardHeader className="pb-2">
-							<Skeleton className="h-5 w-24 bg-navy/10" />
+						<CardHeader className="border-b border-navy/5 bg-muted/20 pb-3">
+							<Skeleton className="h-5 w-32 bg-navy/10" />
 						</CardHeader>
-						<CardContent className="flex flex-col gap-4">
+						<CardContent className="flex flex-col gap-5 pt-4">
 							<Skeleton className="h-10 w-full bg-navy/5" />
-							<div className="flex flex-col gap-2">
-								<Skeleton className="h-9 w-full bg-navy/10" />
-								<Skeleton className="h-9 w-full bg-navy/10" />
+							<div className="flex flex-col gap-2.5 border-t border-navy/5 pt-5">
+								<Skeleton className="h-10 w-full bg-navy/10" />
+								<Skeleton className="h-10 w-full bg-navy/5" />
 							</div>
 						</CardContent>
 					</Card>
