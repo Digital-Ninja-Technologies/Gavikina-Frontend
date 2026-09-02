@@ -4,8 +4,11 @@ import z from "zod";
 export const env = createEnv({
 	clientPrefix: "VITE_",
 	client: {
-		VITE_API_BASE_URL: z.string(),
+		VITE_API_BASE_URL: z.string().min(1),
 	},
-	runtimeEnv: import.meta.env,
+	runtimeEnv: {
+		VITE_API_BASE_URL:
+			process.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_BASE_URL,
+	},
 	emptyStringAsUndefined: true,
 });
