@@ -4,6 +4,7 @@ import {
 	Outlet,
 	redirect,
 	useLocation,
+	useMatches,
 } from "@tanstack/react-router";
 import {
 	Breadcrumb,
@@ -19,6 +20,7 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@workspace/ui/components/sidebar";
+import * as React from "react";
 import { getStableDateRange } from "#/lib/get-date-range";
 import { AppSidebar } from "@/components/app-sidebar";
 import DashboardCatchBoundary from "@/components/catch-boundary";
@@ -48,15 +50,22 @@ export const Route = createFileRoute("/_protected")({
 	},
 });
 
+const KNOWN_SEGMENTS: Record<string, string> = {
+	enquiries: "Enquiries",
+	projects: "Past Projects",
+	"calculator-settings": "Calculator Settings",
+};
+
 function ProtectedLayout() {
 	const location = useLocation();
+	const matches = useMatches();
 
 	const pathSegments = location.pathname.split("/").filter(Boolean);
-	const activePage = pathSegments[pathSegments.length - 1];
-	const pageTitle = activePage
-		? activePage.charAt(0).toUpperCase() +
-			activePage.slice(1).replaceAll("-", " ")
-		: "Overview";
+	const isRoot = pathSegments.length === 0;
+
+	const currentMatch = matches[matches.length - 1];
+	const leafTitle = (currentMatch?.staticData as { title?: string } | undefined)
+		?.title;
 
 	return (
 		<SidebarProvider>
@@ -68,17 +77,57 @@ function ProtectedLayout() {
 						<Separator orientation="vertical" className="mr-2 h-4" />
 						<Breadcrumb>
 							<BreadcrumbList>
-								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbLink render={<Link to="/" />}>
-										Dashboard
-									</BreadcrumbLink>
-								</BreadcrumbItem>
-								{pathSegments.length > 0 && (
-									<BreadcrumbSeparator className="hidden md:block" />
+								{isRoot ? (
+									<BreadcrumbItem>
+										<BreadcrumbPage>Dashboard</BreadcrumbPage>
+									</BreadcrumbItem>
+								) : (
+									<>
+										<BreadcrumbItem className="hidden md:block">
+											<BreadcrumbLink render={<Link to="/" />}>
+												Dashboard
+											</BreadcrumbLink>
+										</BreadcrumbItem>
+										<BreadcrumbSeparator className="hidden md:block" />
+
+										{pathSegments.map((segment, index) => {
+											const isLast = index === pathSegments.length - 1;
+											const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
+
+											if (isLast) {
+												const pageTitle =
+													leafTitle ||
+													(pathSegments[0] === "enquiries" && index === 1
+														? "Enquiry Details"
+														: KNOWN_SEGMENTS[segment] ||
+															segment.charAt(0).toUpperCase() +
+																segment.slice(1).replaceAll("-", " "));
+
+												return (
+													<BreadcrumbItem key={segment}>
+														<BreadcrumbPage>{pageTitle}</BreadcrumbPage>
+													</BreadcrumbItem>
+												);
+											}
+
+											const segmentLabel =
+												KNOWN_SEGMENTS[segment] ||
+												segment.charAt(0).toUpperCase() +
+													segment.slice(1).replaceAll("-", " ");
+
+											return (
+												<React.Fragment key={segment}>
+													<BreadcrumbItem className="hidden sm:block">
+														<BreadcrumbLink render={<Link to={href} />}>
+															{segmentLabel}
+														</BreadcrumbLink>
+													</BreadcrumbItem>
+													<BreadcrumbSeparator className="hidden sm:block" />
+												</React.Fragment>
+											);
+										})}
+									</>
 								)}
-								<BreadcrumbItem>
-									<BreadcrumbPage>{pageTitle}</BreadcrumbPage>
-								</BreadcrumbItem>
 							</BreadcrumbList>
 						</Breadcrumb>
 					</div>

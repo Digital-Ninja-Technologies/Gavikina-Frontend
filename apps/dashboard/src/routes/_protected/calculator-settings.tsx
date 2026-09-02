@@ -25,6 +25,9 @@ import {
 } from "@/modules/catalogue/query-options";
 
 export const Route = createFileRoute("/_protected/calculator-settings")({
+	staticData: {
+		title: "Calculator Settings",
+	},
 	component: CalculatorSettingsRoute,
 });
 

@@ -35,6 +35,9 @@ export const enquiriesSearchSchema = z.object({
 export type EnquiriesSearch = z.infer<typeof enquiriesSearchSchema>;
 
 export const Route = createFileRoute("/_protected/enquiries/")({
+	staticData: {
+		title: "Enquiries",
+	},
 	validateSearch: (search) => enquiriesSearchSchema.parse(search),
 	beforeLoad: ({ context, search }) => {
 		void context.queryClient.query(enquiriesListQueryOptions(search));

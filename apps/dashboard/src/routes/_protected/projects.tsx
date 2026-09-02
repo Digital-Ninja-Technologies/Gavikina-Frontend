@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <static> */
 import {
 	useMutation,
 	useQueryClient,
@@ -8,13 +8,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { Project } from "@workspace/engine";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
-import {
-	Card,
-	CardContent,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@workspace/ui/components/card";
+import { Card, CardContent, CardTitle } from "@workspace/ui/components/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -58,6 +52,9 @@ const projectsSearchSchema = z.object({
 export type ProjectsSearch = z.infer<typeof projectsSearchSchema>;
 
 export const Route = createFileRoute("/_protected/projects")({
+	staticData: {
+		title: "Past Projects",
+	},
 	validateSearch: projectsSearchSchema,
 	beforeLoad: ({ context, search }) => {
 		void context.queryClient.query(

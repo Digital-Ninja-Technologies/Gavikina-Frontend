@@ -314,7 +314,7 @@ function OverviewContent({
 							config={{
 								count: { label: "Assessments", color: CHART_COLORS.barDefault },
 							}}
-							className="h-[280px] w-full"
+							className="h-70 w-full"
 						>
 							<BarChart
 								data={sizeData}
@@ -411,7 +411,7 @@ function OverviewSkeleton() {
 						<Skeleton className="h-5 w-24 bg-navy/10" />
 						<Skeleton className="mt-1 h-3 w-40 bg-navy/5" />
 					</CardHeader>
-					<CardContent className="flex-1 flex flex-col items-center justify-center min-h-[300px] gap-6">
+					<CardContent className="flex-1 flex flex-col items-center justify-center min-h-75 gap-6">
 						<Skeleton className="size-40 rounded-full bg-navy/5" />
 						<div className="flex gap-2">
 							<Skeleton className="h-3 w-12 bg-navy/10" />
