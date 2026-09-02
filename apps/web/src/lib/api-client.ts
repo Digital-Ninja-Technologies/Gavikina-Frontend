@@ -29,9 +29,12 @@ export async function apiClient<T>(
 ): Promise<T> {
 	let response: Response;
 
+	const signal = options.signal || AbortSignal.timeout(20000);
+
 	try {
 		response = await fetch(`${BASE_URL}${endpoint}`, {
 			...options,
+			signal,
 			headers: {
 				"Content-Type": "application/json",
 				...options.headers,

@@ -20,14 +20,14 @@ import { projectsQueryOptions } from "#/modules/projects/query-options";
 import { AsyncBoundary } from "../components/async-boundary";
 import ImageSlot from "../components/ImageSlot";
 import Reveal from "../components/Reveal";
-import SolarCalculator from "../modules/calculator/components/SolarCalculator";
 import { HERO_SLOTS, PROJECT_PHOTOS } from "../lib/content";
+import SolarCalculator from "../modules/calculator/components/SolarCalculator";
 import { openAssess, openCalc } from "../store/modal";
 
 export const Route = createFileRoute("/")({
 	component: Home,
 	loader: async ({ context }) => {
-		await Promise.all([
+		void Promise.all([
 			context.queryClient.query(catalogueTiersQueryOptions()),
 			context.queryClient.query(projectsQueryOptions({ limit: 3 })),
 			context.queryClient.query(catalogueAppliancesQueryOptions()),
