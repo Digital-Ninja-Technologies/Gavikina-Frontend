@@ -74,7 +74,7 @@ function ProtectedLayout() {
 				<header className="sticky inset-x-0 top-0 z-10 flex h-16 w-full shrink-0 items-center gap-2 border-b border-navy/10 bg-white/90 px-4 backdrop-blur-sm transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
 					<div className="flex items-center gap-2">
 						<SidebarTrigger className="-ml-1" />
-						<Separator orientation="vertical" className="mr-2 h-4" />
+						<Separator orientation="vertical" className="mr-2 h-4 my-auto" />
 						<Breadcrumb>
 							<BreadcrumbList>
 								{isRoot ? (

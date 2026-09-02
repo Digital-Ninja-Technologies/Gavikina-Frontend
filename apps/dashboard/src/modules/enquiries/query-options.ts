@@ -204,7 +204,6 @@ export const enquiryDetailQueryOptions = (id: string, view: string) =>
 				return mapToLead(res.data);
 			}
 			const res = await getEnquiryById(id);
-			console.log(res);
 			return mapToLead(res.data);
 		},
 	});
