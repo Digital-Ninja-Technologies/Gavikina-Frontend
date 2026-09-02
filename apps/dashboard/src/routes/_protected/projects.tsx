@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import {
 	useMutation,
 	useQueryClient,
@@ -157,7 +158,7 @@ function ProjectsContent({ searchParams }: { searchParams: ProjectsSearch }) {
 	}
 
 	return layout === "grid" ? (
-		<div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+		<div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
 			{projects.map((p) => (
 				<ProjectGridCard key={p.id} project={p} />
 			))}
@@ -170,10 +171,6 @@ function ProjectsContent({ searchParams }: { searchParams: ProjectsSearch }) {
 		</div>
 	);
 }
-
-// -----------------------------------------------------------------------------
-// REUSABLE HOOK FOR DELETING PROJECTS
-// -----------------------------------------------------------------------------
 
 function useDeleteProject() {
 	const queryClient = useQueryClient();
@@ -201,13 +198,12 @@ function useDeleteProject() {
 	});
 }
 
-// -----------------------------------------------------------------------------
-// UI COMPONENTS
-// -----------------------------------------------------------------------------
-
 function ProjectGridCard({ project }: { project: Project }) {
 	const confirm = useConfirm();
 	const deleteMutation = useDeleteProject();
+
+	const coverPhoto =
+		(project as unknown as { photos?: string[] }).photos?.[0] || null;
 
 	const handleEdit = (e: React.MouseEvent) => {
 		e.stopPropagation();
@@ -232,79 +228,104 @@ function ProjectGridCard({ project }: { project: Project }) {
 
 	return (
 		<Card
-			className="group pt-0 cursor-pointer border-navy/10 bg-white shadow-xs transition-all hover:border-navy/25 hover:shadow-md"
+			className="group flex flex-col overflow-hidden border-navy/10 bg-white p-0 shadow-xs transition-all hover:border-navy/25 hover:shadow-md cursor-pointer"
 			onClick={() => openDialog("PROJECT_FORM", { projectId: project.id })}
 		>
-			<CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0 pt-4 pb-3 pr-3">
-				<div className="flex items-center gap-2">
-					<Badge
-						variant="outline"
-						className="capitalize text-xs font-semibold text-navy/70"
-					>
-						{project.category}
-					</Badge>
-					{project.caseStudy && (
-						<Badge className="bg-green text-white gap-1 text-[11px] font-semibold">
-							<Sparkles className="size-3" /> Featured Case Study
-						</Badge>
-					)}
-				</div>
-				<div className="flex items-center gap-4">
-					<span className="flex items-center gap-1 text-xs text-navy/50 font-medium">
-						<ImageIcon className="size-3.5" />
-						{project.images}
-					</span>
+			{/* Top Image Banner with Tint & Overlays */}
+			<div className="relative aspect-video w-full overflow-hidden bg-navy/5">
+				{coverPhoto ? (
+					<img
+						src={coverPhoto}
+						alt={project.title}
+						className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+					/>
+				) : (
+					<div className="flex size-full flex-col items-center justify-center gap-1.5 bg-cream/70 text-navy/35">
+						<ImageIcon className="size-8" />
+						<span className="text-[11px] font-medium">No photo uploaded</span>
+					</div>
+				)}
 
-					<DropdownMenu>
-						<DropdownMenuTrigger
-							render={
-								<Button
-									variant="ghost"
-									size="icon"
-									className="size-7 -mr-2 text-navy/40 hover:text-navy"
-									onClick={(e) => e.stopPropagation()}
-								/>
-							}
+				<div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-black/35" />
+
+				<div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
+					<div className="flex items-center gap-1.5">
+						<Badge
+							variant="secondary"
+							className="bg-white/95 text-navy font-semibold text-[11px] backdrop-blur-xs capitalize shadow-xs"
 						>
-							<MoreVertical className="size-4" />
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="w-40">
-							<DropdownMenuItem onClick={handleEdit} className="cursor-pointer">
-								<Pencil className="mr-2 size-3.5" />
-								Edit Project
-							</DropdownMenuItem>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem
-								onClick={handleDelete}
-								className="cursor-pointer text-destructive focus:text-destructive"
+							{project.category}
+						</Badge>
+						{project.caseStudy && (
+							<Badge className="bg-amber text-ink font-semibold text-[11px] gap-1 shadow-xs border-amber-light/40">
+								<Sparkles className="size-3 fill-current" /> Case Study
+							</Badge>
+						)}
+					</div>
+
+					<div className="flex items-center gap-1.5">
+						<span className="flex items-center gap-1 rounded-full bg-black/40 px-2.5 py-0.5 text-[11px] font-medium text-white backdrop-blur-xs">
+							<ImageIcon className="size-3" />
+							{project.images}
+						</span>
+
+						<DropdownMenu>
+							<DropdownMenuTrigger
+								render={
+									<Button
+										variant="ghost"
+										size="icon"
+										className="size-7 rounded-full bg-black/40 text-white hover:bg-black/60 hover:text-white backdrop-blur-xs"
+										onClick={(e) => e.stopPropagation()}
+									/>
+								}
 							>
-								<Trash2 className="mr-2 size-3.5" />
-								Delete Project
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+								<MoreVertical className="size-3.5" />
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end" className="w-40">
+								<DropdownMenuItem
+									onClick={handleEdit}
+									className="cursor-pointer"
+								>
+									<Pencil className="mr-2 size-3.5" />
+									Edit Project
+								</DropdownMenuItem>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem
+									onClick={handleDelete}
+									className="cursor-pointer text-destructive focus:text-destructive"
+								>
+									<Trash2 className="mr-2 size-3.5" />
+									Delete Project
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
 				</div>
-			</CardHeader>
 
-			<CardContent className="space-y-2 pb-4">
-				<CardTitle className="line-clamp-1 text-base font-semibold tracking-tight text-navy group-hover:text-green transition-colors">
-					{project.title}
-				</CardTitle>
-				<p className="line-clamp-2 text-xs leading-relaxed text-navy/70 sm:text-sm">
-					{project.body || "No project description provided."}
-				</p>
+				<div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-3 text-white">
+					<span className="flex items-center gap-1 text-xs font-medium drop-shadow-xs">
+						<MapPin className="size-3.5 text-amber" />
+						{project.location}
+					</span>
+					<span className="flex items-center gap-1 text-xs font-bold text-green-light drop-shadow-xs">
+						<Zap className="size-3.5 fill-current" />
+						{project.size}
+					</span>
+				</div>
+			</div>
+
+			{/* Card Body */}
+			<CardContent className="flex flex-1 flex-col justify-between p-4 pt-0">
+				<div className="space-y-1.5">
+					<CardTitle className="line-clamp-1 text-base font-semibold tracking-tight text-navy group-hover:text-green transition-colors">
+						{project.title}
+					</CardTitle>
+					<p className="line-clamp-2 text-xs leading-relaxed text-navy/70">
+						{project.body || "No project description provided."}
+					</p>
+				</div>
 			</CardContent>
-
-			<CardFooter className="flex items-center justify-between border-t border-navy/5 pt-3 text-xs text-navy/60 font-medium">
-				<span className="flex items-center gap-1.5 truncate">
-					<MapPin className="size-3.5 shrink-0 text-navy/40" />
-					{project.location}
-				</span>
-				<span className="flex items-center gap-1 text-green font-semibold shrink-0">
-					<Zap className="size-3.5" />
-					{project.size}
-				</span>
-			</CardFooter>
 		</Card>
 	);
 }
@@ -313,6 +334,9 @@ function ProjectListRow({ project }: { project: Project }) {
 	const confirm = useConfirm();
 	const deleteMutation = useDeleteProject();
 
+	const coverPhoto =
+		(project as unknown as { photos?: string[] }).photos?.[0] || null;
+
 	const handleEdit = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		openDialog("PROJECT_FORM", { projectId: project.id });
@@ -336,13 +360,24 @@ function ProjectListRow({ project }: { project: Project }) {
 
 	return (
 		<Card
-			className="group py-4 cursor-pointer border-navy/10 bg-white shadow-xs transition-all hover:border-navy/25 hover:bg-cream/20"
+			className="group cursor-pointer border-navy/10 bg-white p-3 shadow-xs transition-all hover:border-navy/25 hover:bg-cream/20"
 			onClick={() => openDialog("PROJECT_FORM", { projectId: project.id })}
 		>
-			<CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-				<div className="flex min-w-0 flex-1 items-center gap-4">
-					<div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-navy/5 text-navy group-hover:bg-green/10 group-hover:text-green transition-colors">
-						<Zap className="size-5" />
+			<CardContent className="flex flex-col gap-3 p-0 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex min-w-0 flex-1 items-center gap-3.5">
+					{/* Thumbnail Image */}
+					<div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-navy/5 border border-navy/10">
+						{coverPhoto ? (
+							<img
+								src={coverPhoto}
+								alt={project.title}
+								className="size-full object-cover"
+							/>
+						) : (
+							<div className="flex size-full items-center justify-center bg-cream/70 text-navy/35">
+								<Zap className="size-5" />
+							</div>
+						)}
 					</div>
 
 					<div className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -376,7 +411,7 @@ function ProjectListRow({ project }: { project: Project }) {
 					</div>
 
 					<div className="flex items-center gap-2">
-						<span className="flex items-center gap-1 text-xs text-navy/50 font-medium min-w-14 justify-end">
+						<span className="flex items-center gap-1 text-xs text-navy/50 font-medium min-w-12 justify-end">
 							<ImageIcon className="size-3.5" />
 							{project.images}
 						</span>
@@ -444,26 +479,17 @@ function EmptyProjectsState() {
 function ProjectsSkeleton({ layout }: { layout: "grid" | "list" }) {
 	if (layout === "grid") {
 		return (
-			<div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+			<div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
 				{Array.from({ length: 6 }).map((_, i) => (
-					// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton
-					<Card key={i} className="border-navy/10 shadow-xs">
-						<CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0 pb-3">
-							<div className="flex items-center gap-2">
-								<Skeleton className="h-5 w-16 rounded-full bg-navy/10" />
-								<Skeleton className="h-5 w-24 rounded-full bg-navy/10" />
-							</div>
-							<Skeleton className="h-4 w-12 bg-navy/10" />
-						</CardHeader>
-						<CardContent className="space-y-2 pb-4">
+					<Card
+						key={i}
+						className="border-navy/10 p-0 shadow-xs overflow-hidden"
+					>
+						<Skeleton className="aspect-video w-full rounded-none bg-navy/10" />
+						<div className="space-y-2 p-4">
 							<Skeleton className="h-5 w-3/4 bg-navy/10" />
 							<Skeleton className="h-3.5 w-full bg-navy/5" />
-							<Skeleton className="h-3.5 w-4/5 bg-navy/5" />
-						</CardContent>
-						<CardFooter className="flex items-center justify-between border-t border-navy/5 pt-3">
-							<Skeleton className="h-4 w-1/3 bg-navy/10" />
-							<Skeleton className="h-4 w-16 bg-navy/10" />
-						</CardFooter>
+						</div>
 					</Card>
 				))}
 			</div>
@@ -473,24 +499,14 @@ function ProjectsSkeleton({ layout }: { layout: "grid" | "list" }) {
 	return (
 		<div className="flex flex-col gap-3">
 			{Array.from({ length: 5 }).map((_, i) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: Static skeleton
-				<Card key={i} className="border-navy/10 shadow-xs">
-					<CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-						<div className="flex min-w-0 flex-1 items-center gap-4">
-							<Skeleton className="size-10 shrink-0 rounded-xl bg-navy/10" />
-							<div className="flex min-w-0 flex-1 flex-col gap-1.5">
-								<Skeleton className="h-5 w-48 bg-navy/10" />
-								<Skeleton className="h-3.5 w-64 bg-navy/5" />
-							</div>
+				<Card key={i} className="border-navy/10 p-3 shadow-xs">
+					<div className="flex items-center gap-3.5">
+						<Skeleton className="size-16 rounded-xl bg-navy/10 shrink-0" />
+						<div className="flex flex-1 flex-col gap-1.5">
+							<Skeleton className="h-5 w-48 bg-navy/10" />
+							<Skeleton className="h-3.5 w-64 bg-navy/5" />
 						</div>
-						<div className="flex items-center justify-between gap-4 border-t border-navy/5 pt-2 sm:border-t-0 sm:pt-0 shrink-0">
-							<div className="flex items-center gap-2">
-								<Skeleton className="h-5 w-16 rounded-full bg-navy/10" />
-								<Skeleton className="h-4 w-12 bg-navy/10" />
-							</div>
-							<Skeleton className="h-4 w-16 bg-navy/10" />
-						</div>
-					</CardContent>
+					</div>
 				</Card>
 			))}
 		</div>

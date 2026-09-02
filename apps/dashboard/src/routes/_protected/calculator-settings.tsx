@@ -47,12 +47,7 @@ function CalculatorSettingsRoute() {
 				</div>
 
 				<div className="flex items-center gap-2.5">
-					<Button
-						type="submit"
-						form="formula-form"
-						size="sm"
-						className="gap-1.5"
-					>
+					<Button type="submit" form="formula-form" className="gap-1.5">
 						<Save className="size-4" /> Save Formula
 					</Button>
 				</div>

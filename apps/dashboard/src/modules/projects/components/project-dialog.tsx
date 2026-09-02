@@ -21,9 +21,9 @@ import {
 } from "@workspace/ui/components/form-fields";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { toast } from "@workspace/ui/components/toast";
-import { ImagePlus, Loader2 } from "lucide-react";
-import { type ComponentProps, useEffect, useMemo } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { ImagePlus, Loader2, X } from "lucide-react";
+import { type ComponentProps, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { catalogueTiersQueryOptions } from "@/modules/catalogue/query-options";
 import { closeDialog } from "@/store/dialog-store";
 import { createProject, updateProject } from "../api";
@@ -45,6 +45,7 @@ const emptyDraft = (defaultSize: string): ProjectDraftValues => ({
 
 export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 	const queryClient = useQueryClient();
+	const [photoList, setPhotoList] = useState<string[]>([]);
 
 	const { data: project, isLoading: isProjectLoading } = useQuery({
 		...projectDetailQueryOptions(projectId ?? ""),
@@ -67,15 +68,34 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 	useEffect(() => {
 		if (projectId && project) {
 			form.reset(project);
+			const existingPhotos =
+				(project as unknown as { photos?: string[] }).photos || [];
+			setPhotoList(existingPhotos);
 		} else if (!projectId) {
 			form.reset(emptyDraft(defaultSize));
+			setPhotoList([]);
 		}
 	}, [project, projectId, form, defaultSize]);
 
-	const imagesCount = useWatch({
-		control: form.control,
-		name: "images",
-	});
+	const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = Array.from(e.target.files || []);
+		if (!files.length) return;
+
+		const objectUrls = files.map((file) => URL.createObjectURL(file));
+		setPhotoList((prev) => {
+			const next = [...prev, ...objectUrls];
+			form.setValue("images", next.length);
+			return next;
+		});
+	};
+
+	const handleRemoveImage = (indexToRemove: number) => {
+		setPhotoList((prev) => {
+			const next = prev.filter((_, idx) => idx !== indexToRemove);
+			form.setValue("images", next.length);
+			return next;
+		});
+	};
 
 	const createMutation = useMutation({
 		mutationFn: createProject,
@@ -101,7 +121,7 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 	});
 
 	const updateMutation = useMutation({
-		mutationFn: (data: { id: string; payload: any }) =>
+		mutationFn: (data: { id: string; payload: unknown }) =>
 			updateProject(data.id, data.payload),
 		onSuccess: () => {
 			toast.add({
@@ -134,7 +154,7 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 			category: values.category,
 			description: values.body,
 			isCaseStudy: values.caseStudy,
-			photos: Array(values.images).fill("https://placeholder.image.url"),
+			photos: photoList,
 		};
 
 		if (projectId) {
@@ -205,24 +225,54 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 							control={form.control}
 							name="body"
 							label="Description"
-							rows={5}
+							rows={4}
 							placeholder="What the system covers and how it resolved power needs for the client."
 						/>
 
+						{/* Interactive Image Uploader with Previews */}
 						<Field>
-							<FieldLabel>Photographs</FieldLabel>
+							<div className="flex items-center justify-between mb-1.5">
+								<FieldLabel>Photographs</FieldLabel>
+								<span className="text-xs text-navy/50">
+									{photoList.length} uploaded
+								</span>
+							</div>
+
+							{photoList.length > 0 && (
+								<div className="mb-3 grid grid-cols-4 gap-2.5">
+									{photoList.map((url, idx) => (
+										<div
+											key={url}
+											className="group relative aspect-square overflow-hidden rounded-xl border border-navy/10 bg-navy/5"
+										>
+											<img
+												src={url}
+												alt={`Upload preview ${idx + 1}`}
+												className="size-full object-cover"
+											/>
+											<button
+												type="button"
+												aria-label="Remove photo"
+												onClick={() => handleRemoveImage(idx)}
+												className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-black/60 text-white transition-opacity hover:bg-black"
+											>
+												<X className="size-3" />
+											</button>
+										</div>
+									))}
+								</div>
+							)}
+
 							<div className="relative flex items-center gap-3 rounded-xl border border-dashed border-navy/20 bg-muted/20 p-3.5 transition-colors hover:border-navy/40">
 								<span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-navy/10 bg-white text-navy shadow-2xs">
 									<ImagePlus className="size-4" />
 								</span>
 								<div className="flex min-w-0 flex-1 flex-col">
 									<span className="truncate text-xs font-medium text-navy sm:text-sm">
-										{imagesCount
-											? `${imagesCount} photograph${imagesCount === 1 ? "" : "s"} attached`
-											: "Attach photographs"}
+										Attach photos
 									</span>
 									<span className="text-xs text-navy/50">
-										PNG, JPG, or WebP formats
+										JPG, PNG, or WebP
 									</span>
 								</div>
 								<input
@@ -230,12 +280,7 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 									multiple
 									accept="image/*"
 									className="absolute inset-0 size-full cursor-pointer opacity-0"
-									onChange={(e) =>
-										form.setValue(
-											"images",
-											imagesCount + (e.target.files?.length || 0),
-										)
-									}
+									onChange={handleImageUpload}
 								/>
 							</div>
 						</Field>
@@ -270,10 +315,6 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 	);
 }
 
-// -----------------------------------------------------------------------------
-// SKELETON LOADER
-// -----------------------------------------------------------------------------
-
 function ProjectFormSkeleton() {
 	return (
 		<div className="flex flex-col gap-4 py-2">
@@ -300,10 +341,6 @@ function ProjectFormSkeleton() {
 				<Skeleton className="h-24 w-full bg-navy/5" />
 			</div>
 			<Skeleton className="h-20 w-full rounded-xl bg-navy/5" />
-			<div className="flex items-center gap-2">
-				<Skeleton className="size-4 bg-navy/10" />
-				<Skeleton className="h-4 w-48 bg-navy/10" />
-			</div>
 		</div>
 	);
 }
