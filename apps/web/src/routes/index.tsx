@@ -27,7 +27,7 @@ import { openAssess, openCalc } from "../store/modal";
 export const Route = createFileRoute("/")({
 	component: Home,
 	loader: async ({ context }) => {
-		void Promise.all([
+		await Promise.all([
 			context.queryClient.query(catalogueTiersQueryOptions()),
 			context.queryClient.query(projectsQueryOptions({ limit: 3 })),
 			context.queryClient.query(catalogueAppliancesQueryOptions()),

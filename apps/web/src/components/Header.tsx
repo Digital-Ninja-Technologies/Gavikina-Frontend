@@ -9,6 +9,7 @@ import {
 	NavigationMenuTrigger,
 	navigationMenuTriggerStyle,
 } from "@workspace/ui/components/navigation-menu";
+import { useIsMobile } from "@workspace/ui/hooks/use-mobile";
 import { cn } from "@workspace/ui/lib/utils";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -34,6 +35,7 @@ const isPathActive = (targetPath: string, currentPath: string) => {
 export default function Header() {
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const pathname = useRouterState({ select: (s) => s.location.pathname });
+	const isMobile = useIsMobile();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <close sidebar on navigation>
 	useEffect(() => {
@@ -83,8 +85,8 @@ export default function Header() {
 														const active = isPathActive(item.path, pathname);
 														return (
 															<li key={item.path}>
-                                <NavigationMenuLink
-                                  className={"text-left items-start"}
+																<NavigationMenuLink
+																	className={"items-start text-left"}
 																	render={
 																		<Link
 																			to={item.path}
@@ -145,7 +147,7 @@ export default function Header() {
 						</Button>
 						<Button
 							variant={"primary"}
-							size="lg"
+							size={isMobile ? "sm" : "lg"}
 							onClick={() => openAssess()}
 							className="px-3 text-xs sm:px-4 sm:text-sm"
 						>
@@ -168,17 +170,20 @@ export default function Header() {
 				</div>
 			</header>
 			{mobileOpen && (
-				<div className="animate-gv-in fixed inset-x-0 bottom-0 top-18 z-40 overflow-y-auto bg-white px-6 pb-10 pt-4 lg:hidden">
+				<div className="fixed inset-x-0 top-18 bottom-0 z-40 animate-gv-in overflow-y-auto bg-white px-6 pt-4 pb-10 lg:hidden">
 					{NAV.map((group) => (
 						<div key={group.key} className="mt-8 first:mt-0">
-							<h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-navy/50">
+							<h4 className="mb-2 text-xs font-semibold tracking-wider text-navy/50 uppercase">
 								{group.label}
 							</h4>
 							{group.items.map((item) => (
 								<Link
 									key={item.path}
 									to={item.path}
-									className="flex w-full flex-col gap-0.5 border-b border-navy/10 py-3 text-left text-navy"
+									className={cn(
+										"flex w-full flex-col gap-0.5 border-b border-navy/10 py-3 text-left text-navy",
+										isPathActive(item.path, pathname) && "bg-cream text-navy",
+									)}
 								>
 									<span className="text-sm font-medium">{item.label}</span>
 									{item.note && (
@@ -191,7 +196,10 @@ export default function Header() {
 					<div className="mt-4">
 						<Link
 							to="/contact"
-							className="flex w-full border-b border-navy/10 py-3 text-left text-sm font-medium text-navy"
+							className={cn(
+								"flex w-full border-b border-navy/10 py-3 text-left text-sm font-medium text-navy",
+								isPathActive("/contact", pathname) && "bg-cream text-navy",
+							)}
 						>
 							Contact
 						</Link>

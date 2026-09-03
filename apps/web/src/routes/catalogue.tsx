@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { fmtRange, INCLUDED } from "@workspace/engine";
+import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Check } from "lucide-react";
@@ -169,14 +170,23 @@ function CatalogueTiersList() {
 							Typically powers
 						</span>
 						<div className="mt-2 flex flex-wrap gap-1.5">
-							{t.typically_powers.map((p) => (
-								<span
-									key={p}
-									className="rounded-full bg-cream px-3 py-1 text-xs font-medium text-navy/80"
-								>
-									{p}
-								</span>
-							))}
+							{t.typically_powers.map((item) =>
+								item.split(",").map((power, idx) => {
+									const trimmedPower = power.trim();
+									return (
+										<Badge
+											key={`${trimmedPower}-${
+												// biome-ignore lint/suspicious/noArrayIndexKey: <...>
+												idx
+											}`}
+											variant="outline"
+											className="bg-cream/60 text-[11px] text-navy/80 border-navy/10"
+										>
+											{trimmedPower}
+										</Badge>
+									);
+								}),
+							)}
 						</div>
 					</div>
 

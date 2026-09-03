@@ -7,7 +7,7 @@ export interface AssessmentState {
 	property: "home" | "business" | null;
 	reason: string | null;
 	selection: Selection;
-	backupHours: number;
+	backupHours: number | null;
 	fuelSpend: number;
 	contact: { name: string; phone: string; email: string };
 	payment: string | null;
@@ -23,7 +23,7 @@ const initialState: AssessmentState = {
 	property: null,
 	reason: null,
 	selection: {},
-	backupHours: 8, // Default
+	backupHours: null,
 	fuelSpend: 60000, // Default
 	contact: { name: "", phone: "", email: "" },
 	payment: null,
