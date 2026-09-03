@@ -357,7 +357,7 @@ function OverviewContent({
 
                   <ChartLegend
                     content={<ChartLegendContent nameKey="id" />}
-                    className="-translate-y-2 flex-wrap gap-2"
+                    // className="-translate-y-2 flex-wrap gap-2"
                   />
                 </PieChart>
               </ChartContainer>
