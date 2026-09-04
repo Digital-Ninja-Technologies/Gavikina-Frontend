@@ -93,7 +93,7 @@ function mapToLead(apiItem: any): Lead {
 			lead.role = d.roleAppliedFor;
 			lead.area = d.location;
 			lead.about = d.experience;
-			lead.cv = d.cv;
+			lead.cv = d.cvUrl || d.cv;
 			lead.cvSize = "PDF Document";
 			break;
 		case "contact":

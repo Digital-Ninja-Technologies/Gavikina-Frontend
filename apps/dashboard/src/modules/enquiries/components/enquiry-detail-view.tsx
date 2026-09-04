@@ -16,7 +16,6 @@ import {
 	Info,
 	Mail,
 	Phone,
-	Sparkles,
 	Zap,
 } from "lucide-react";
 import type { Lead } from "#/lib/data";
@@ -97,8 +96,12 @@ export function EnquiryDetailContent({
 		: 0;
 
 	const downloadCv = () => {
-		const body = `CV placeholder for ${open.name}\n\nRole applied for: ${open.role}\nLocation: ${open.area}\nPhone: ${open.phone}\nEmail: ${open.email}\nSubmitted: ${open.when}\n\n${open.about}`;
-		download(`${(open.cv || "cv").replace(/\.pdf$/, "")}.txt`, body);
+		if (open.cv?.startsWith("http")) {
+			window.open(open.cv, "_blank");
+		} else {
+			const body = `CV placeholder for ${open.name}\n\nRole applied for: ${open.role}\nLocation: ${open.area}\nPhone: ${open.phone}\nEmail: ${open.email}\nSubmitted: ${open.when}\n\n${open.about}`;
+			download(`${(open.cv || "cv").replace(/\.pdf$/, "")}.txt`, body);
+		}
 	};
 
 	const detailMeta =
@@ -329,7 +332,9 @@ export function EnquiryDetailContent({
 								</span>
 							</CardHeader>
 							<CardContent>
-								<p className="text-sm leading-loose font-light italic text-navy">{open.ai}</p>
+								<p className="text-sm leading-loose font-light italic text-navy">
+									{open.ai}
+								</p>
 							</CardContent>
 						</Card>
 					)}

@@ -4,13 +4,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import type { CareerApplicationValues } from "@workspace/schemas";
 import { careerApplicationSchema } from "@workspace/schemas";
 import { Button } from "@workspace/ui/components/button";
-import { Field, FieldLabel } from "@workspace/ui/components/field";
 import { FormInput, FormTextarea } from "@workspace/ui/components/form-fields";
 import { toast } from "@workspace/ui/components/toast";
-import { Check, Upload } from "lucide-react";
+import { Check } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { submitCareerApplication } from "#/modules/enquiries/api";
+import { FileUploadArea } from "@/modules/upload/components/file-upload-area";
+import { useFileUpload } from "@/modules/upload/hooks/use-file-upload";
 
 export const Route = createFileRoute("/careers")({ component: Careers });
 
@@ -32,13 +33,14 @@ function Careers() {
 			about: "",
 		},
 	});
-	const [cvName, setCvName] = useState("");
+
+	const [cvFile, setCvFile] = useState<File | null | string>(null);
 	const [sent, setSent] = useState(false);
 
-	const mutation = useMutation({
-		mutationFn: (data: CareerApplicationValues & { cvName?: string }) =>
-			submitCareerApplication({ data }),
+	const { uploadFile, isUploading, progress } = useFileUpload();
 
+	const mutation = useMutation({
+		mutationFn: submitCareerApplication,
 		onSuccess(data) {
 			if (data.success) {
 				setSent(true);
@@ -47,23 +49,35 @@ function Careers() {
 		onError(error) {
 			toast.add({
 				title: "Error",
-				description:
-					error?.message ||
-					"Failed to send application. Please try again later.",
+				description: error.message || "Failed to send application.",
 				type: "error",
 			});
-			console.error("Error submitting career application:", error);
 		},
 	});
 
 	const onSubmit = form.handleSubmit(async (values) => {
-		mutation.mutate({ ...values, cvName });
+		if (!cvFile || !(cvFile instanceof File)) {
+			toast.add({
+				title: "CV Required",
+				description: "Please attach your CV to apply.",
+				type: "error",
+			});
+			return;
+		}
+
+		try {
+			// 1. Upload file and get the Tigris file ID
+			const cvFileId = await uploadFile(cvFile, "CV");
+
+			// 2. Submit the application referencing the file ID
+			mutation.mutate({ ...values, cvFileId });
+		} catch (error) {
+			// useFileUpload already handles the toast for upload errors
+			console.error(error);
+		}
 	});
 
-	const pickCv = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) setCvName(file.name);
-	};
+	const isPending = mutation.isPending || isUploading;
 
 	return (
 		<div className="section-wrapper">
@@ -125,6 +139,7 @@ function Careers() {
 									name="role"
 									label="Role you are applying for"
 									placeholder="e.g. Installation technician"
+									disabled={isPending}
 								/>
 
 								<FormInput
@@ -132,6 +147,7 @@ function Careers() {
 									name="name"
 									label="Full name"
 									placeholder="Your name"
+									disabled={isPending}
 								/>
 
 								<FormInput
@@ -140,6 +156,7 @@ function Careers() {
 									type="email"
 									label="Email address"
 									placeholder="you@email.com"
+									disabled={isPending}
 								/>
 
 								<FormInput
@@ -148,6 +165,7 @@ function Careers() {
 									type="tel"
 									label="Phone number"
 									placeholder="0803 000 0000"
+									disabled={isPending}
 								/>
 
 								<FormInput
@@ -155,6 +173,7 @@ function Careers() {
 									name="location"
 									label="Where are you based?"
 									placeholder="Area and state"
+									disabled={isPending}
 								/>
 
 								<FormTextarea
@@ -164,38 +183,34 @@ function Careers() {
 									rows={5}
 									className="min-h-30"
 									placeholder="Where you have worked and what you have installed or maintained"
+									disabled={isPending}
 								/>
 
-								<Field>
-									<FieldLabel>Upload your CV</FieldLabel>
-									<div className="relative flex items-center gap-3.5 rounded-xl border border-dashed border-navy/25 bg-cream/30 p-3.5 transition-colors hover:border-green hover:bg-cream/60">
-										<span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-navy/10 bg-white text-green shadow-2xs">
-											<Upload className="size-4" />
-										</span>
-										<div className="flex min-w-0 flex-col">
-											<span className="truncate text-xs font-medium text-navy sm:text-sm">
-												{cvName || "Choose a file"}
-											</span>
-											<span className="text-xs text-navy/50">
-												PDF or Word document, up to 5MB
-											</span>
-										</div>
-										<input
-											type="file"
-											accept=".pdf,.doc,.docx"
-											onChange={pickCv}
-											className="absolute inset-0 size-full cursor-pointer opacity-0"
-										/>
-									</div>
-								</Field>
+								<FileUploadArea
+									label="Upload your CV"
+									accept={{
+										"application/pdf": [".pdf"],
+										"application/msword": [".doc"],
+										"application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+											[".docx"],
+									}}
+									onChange={setCvFile}
+									value={cvFile}
+									isUploading={isUploading}
+									progress={progress}
+								/>
 
 								<Button
 									type="submit"
 									size="lg"
 									className="mt-2 w-full"
-									disabled={mutation.isPending}
+									disabled={isPending}
 								>
-									{mutation.isPending ? "Submitting..." : "Submit application"}
+									{isUploading
+										? `Uploading CV (${progress}%)...`
+										: mutation.isPending
+											? "Submitting..."
+											: "Submit application"}
 								</Button>
 
 								<p className="text-xs leading-relaxed text-navy/50">

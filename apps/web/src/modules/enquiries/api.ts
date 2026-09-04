@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { CareerApplicationValues } from "@workspace/schemas";
 import {
 	agentApplicationSchema,
-	careerApplicationSchema,
 	contactFormSchema,
 	investorRequestSchema,
 } from "@workspace/schemas";
@@ -55,28 +55,28 @@ export const submitAgentApplication = createServerFn({ method: "POST" })
 		});
 	});
 
-export const submitCareerApplication = createServerFn({ method: "POST" })
-	.validator(careerApplicationSchema)
-	.handler(async ({ data: values }) => {
-		const payload = {
-			type: "careers",
-			source: "careers_application",
-			name: values.name,
-			email: values.email,
-			phone: values.phone,
-			details: {
-				roleAppliedFor: values.role,
-				experience: values.about,
-				location: values.location,
-				cv: values.cvName || "pending-upload-url",
-			},
-		};
+export async function submitCareerApplication(
+	data: CareerApplicationValues & { cvFileId: string },
+) {
+	const payload = {
+		type: "careers",
+		source: "careers_application",
+		name: data.name,
+		email: data.email,
+		phone: data.phone,
+		details: {
+			roleAppliedFor: data.role,
+			experience: data.about,
+			location: data.location,
+			cv: data.cvFileId,
+		},
+	};
 
-		return apiClient<ApiResponse<any>>("/enquiries", {
-			method: "POST",
-			body: JSON.stringify(payload),
-		});
+	return apiClient<ApiResponse<any>>("/enquiries", {
+		method: "POST",
+		body: JSON.stringify(payload),
 	});
+}
 
 export const submitInvestorRequest = createServerFn({ method: "POST" })
 	.validator(investorRequestSchema)
