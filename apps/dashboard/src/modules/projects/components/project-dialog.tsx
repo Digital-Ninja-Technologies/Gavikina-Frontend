@@ -25,9 +25,14 @@ import { ImagePlus, Loader2, X } from "lucide-react";
 import { type ComponentProps, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { catalogueTiersQueryOptions } from "@/modules/catalogue/query-options";
+import { useFileUpload } from "@/modules/upload/hooks/use-file-upload";
 import { closeDialog } from "@/store/dialog-store";
 import { createProject, updateProject } from "../api";
-import { projectDetailQueryOptions, projectsKeys } from "../query-options";
+import {
+	type ProjectWithPhotos,
+	projectDetailQueryOptions,
+	projectsKeys,
+} from "../query-options";
 
 interface ProjectDialogProps extends ComponentProps<typeof Dialog> {
 	projectId?: string;
@@ -45,7 +50,12 @@ const emptyDraft = (defaultSize: string): ProjectDraftValues => ({
 
 export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 	const queryClient = useQueryClient();
-	const [photoList, setPhotoList] = useState<string[]>([]);
+
+	// Store mixed types: existing URLs (string) and new uploads (File)
+	const [photos, setPhotos] = useState<Array<File | string>>([]);
+	const [uploadingIndex, setUploadingIndex] = useState(0);
+
+	const { uploadFile, isUploading, progress } = useFileUpload();
 
 	const { data: project, isLoading: isProjectLoading } = useQuery({
 		...projectDetailQueryOptions(projectId ?? ""),
@@ -68,29 +78,29 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 	useEffect(() => {
 		if (projectId && project) {
 			form.reset(project);
-			const existingPhotos =
-				(project as unknown as { photos?: string[] }).photos || [];
-			setPhotoList(existingPhotos);
+			setPhotos((project as ProjectWithPhotos).photos || []);
 		} else if (!projectId) {
 			form.reset(emptyDraft(defaultSize));
-			setPhotoList([]);
+			setPhotos([]);
 		}
 	}, [project, projectId, form, defaultSize]);
 
-	const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(e.target.files || []);
 		if (!files.length) return;
 
-		const objectUrls = files.map((file) => URL.createObjectURL(file));
-		setPhotoList((prev) => {
-			const next = [...prev, ...objectUrls];
+		setPhotos((prev) => {
+			const next = [...prev, ...files];
 			form.setValue("images", next.length);
 			return next;
 		});
+
+		// Clear input so same file can be selected again if removed
+		e.target.value = "";
 	};
 
 	const handleRemoveImage = (indexToRemove: number) => {
-		setPhotoList((prev) => {
+		setPhotos((prev) => {
 			const next = prev.filter((_, idx) => idx !== indexToRemove);
 			form.setValue("images", next.length);
 			return next;
@@ -144,9 +154,32 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 		},
 	});
 
-	const isPending = createMutation.isPending || updateMutation.isPending;
+	const isPending =
+		createMutation.isPending || updateMutation.isPending || isUploading;
 
-	const onSubmit = form.handleSubmit((values) => {
+	const onSubmit = form.handleSubmit(async (values) => {
+		const finalPhotoIds: string[] = [];
+		let currentNewFileIndex = 0;
+
+		// 1. Process files sequentially: upload Files, keep strings
+		for (const photo of photos) {
+			if (photo instanceof File) {
+				try {
+					setUploadingIndex(currentNewFileIndex + 1);
+					const fileId = await uploadFile(photo, "PROJECT_IMAGE");
+					finalPhotoIds.push(fileId);
+					currentNewFileIndex++;
+				} catch (error) {
+					// uploadFile already triggers an error toast, halt submission
+					return;
+				}
+			} else {
+				// It's an existing URL/ID, keep it
+				finalPhotoIds.push(photo);
+			}
+		}
+
+		// 2. Build final payload
 		const payload = {
 			title: values.title,
 			location: values.location,
@@ -154,15 +187,18 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 			category: values.category,
 			description: values.body,
 			isCaseStudy: values.caseStudy,
-			photos: photoList,
+			photos: finalPhotoIds,
 		};
 
+		// 3. Dispatch to API
 		if (projectId) {
 			updateMutation.mutate({ id: projectId, payload });
 		} else {
 			createMutation.mutate(payload);
 		}
 	});
+
+	const newFilesCount = photos.filter((p) => p instanceof File).length;
 
 	return (
 		<Dialog {...props}>
@@ -191,6 +227,7 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 							name="title"
 							label="Title"
 							placeholder="e.g. Lekki Phase 1 Duplex"
+							disabled={isPending}
 						/>
 
 						<FormInput
@@ -198,6 +235,7 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 							name="location"
 							label="Location"
 							placeholder="e.g. Lekki, Lagos"
+							disabled={isPending}
 						/>
 
 						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -207,6 +245,7 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 								label="System Size"
 								options={sizeOptions}
 								placeholder="Select size"
+								disabled={isPending}
 							/>
 
 							<FormSelect
@@ -218,6 +257,7 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 									{ label: "Business", value: "business" },
 								]}
 								placeholder="Select category"
+								disabled={isPending}
 							/>
 						</div>
 
@@ -227,6 +267,7 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 							label="Description"
 							rows={4}
 							placeholder="What the system covers and how it resolved power needs for the client."
+							disabled={isPending}
 						/>
 
 						{/* Interactive Image Uploader with Previews */}
@@ -234,32 +275,44 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 							<div className="flex items-center justify-between mb-1.5">
 								<FieldLabel>Photographs</FieldLabel>
 								<span className="text-xs text-navy/50">
-									{photoList.length} uploaded
+									{photos.length} uploaded
 								</span>
 							</div>
 
-							{photoList.length > 0 && (
+							{photos.length > 0 && (
 								<div className="mb-3 grid grid-cols-4 gap-2.5">
-									{photoList.map((url, idx) => (
-										<div
-											key={url}
-											className="group relative aspect-square overflow-hidden rounded-xl border border-navy/10 bg-navy/5"
-										>
-											<img
-												src={url}
-												alt={`Upload preview ${idx + 1}`}
-												className="size-full object-cover"
-											/>
-											<button
-												type="button"
-												aria-label="Remove photo"
-												onClick={() => handleRemoveImage(idx)}
-												className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-black/60 text-white transition-opacity hover:bg-black"
+									{photos.map((photo, idx) => {
+										const isFile = photo instanceof File;
+										const url = isFile ? URL.createObjectURL(photo) : photo;
+
+										return (
+											<div
+												// biome-ignore lint/suspicious/noArrayIndexKey: Order mapping
+												key={idx}
+												className="group relative aspect-square overflow-hidden rounded-xl border border-navy/10 bg-navy/5"
 											>
-												<X className="size-3" />
-											</button>
-										</div>
-									))}
+												<img
+													src={url}
+													alt={`Upload preview ${idx + 1}`}
+													className="size-full object-cover"
+													// Revoke object URL after rendering to prevent memory leaks
+													onLoad={() => {
+														if (isFile) URL.revokeObjectURL(url);
+													}}
+												/>
+												{!isPending && (
+													<button
+														type="button"
+														aria-label="Remove photo"
+														onClick={() => handleRemoveImage(idx)}
+														className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black"
+													>
+														<X className="size-3" />
+													</button>
+												)}
+											</div>
+										);
+									})}
 								</div>
 							)}
 
@@ -278,9 +331,10 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 								<input
 									type="file"
 									multiple
-									accept="image/*"
-									className="absolute inset-0 size-full cursor-pointer opacity-0"
-									onChange={handleImageUpload}
+									accept="image/jpeg,image/png,image/webp"
+									className="absolute inset-0 size-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
+									onChange={handleImageSelect}
+									disabled={isPending}
 								/>
 							</div>
 						</Field>
@@ -289,6 +343,7 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 							control={form.control}
 							name="caseStudy"
 							label="Feature as detailed case study"
+							disabled={isPending}
 						/>
 					</form>
 				)}
@@ -296,7 +351,12 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 				<DialogFooter className="flex items-center gap-2 sm:justify-end">
 					<DialogClose
 						render={
-							<Button type="button" variant="outline" disabled={isPending} />
+							<Button
+								type="button"
+								variant="outline"
+								size="sm"
+								disabled={isPending}
+							/>
 						}
 					>
 						Cancel
@@ -304,10 +364,17 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 					<Button
 						type="submit"
 						form="project-form"
+						size="sm"
 						disabled={isPending || isProjectLoading}
 					>
-						{isPending && <Loader2 className="animate-spin" />}
-						{projectId ? "Save Changes" : "Create Project"}
+						{isUploading && <Loader2 className="mr-2 size-4 animate-spin" />}
+						{isUploading
+							? `Uploading ${uploadingIndex}/${newFilesCount} (${progress}%)`
+							: updateMutation.isPending || createMutation.isPending
+								? "Saving..."
+								: projectId
+									? "Save Changes"
+									: "Create Project"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
@@ -315,6 +382,9 @@ export function ProjectDialog({ projectId, ...props }: ProjectDialogProps) {
 	);
 }
 
+// -----------------------------------------------------------------------------
+// SKELETON LOADER
+// -----------------------------------------------------------------------------
 function ProjectFormSkeleton() {
 	return (
 		<div className="flex flex-col gap-4 py-2">

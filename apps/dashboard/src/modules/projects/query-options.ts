@@ -5,7 +5,9 @@ import { getProjectById, getProjects, type ProjectsQueryParams } from "./api";
 // -----------------------------------------------------------------------------
 // DATA MAPPER
 // -----------------------------------------------------------------------------
-function mapToProject(apiItem: any): Project {
+export type ProjectWithPhotos = Project & { photos: string[] };
+
+function mapToProject(apiItem: any): ProjectWithPhotos {
 	return {
 		id: apiItem._id || apiItem.id,
 		title: apiItem.title,
@@ -15,6 +17,7 @@ function mapToProject(apiItem: any): Project {
 		caseStudy: apiItem.isCaseStudy,
 		images: apiItem.photos?.length || 0,
 		body: apiItem.description,
+		photos: apiItem.photos || [],
 	};
 }
 
