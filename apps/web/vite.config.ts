@@ -12,7 +12,14 @@ export default defineConfig({
 		dedupe: ["react", "react-dom"],
 	},
 	ssr: {
-		noExternal: ["@workspace/ui", "@workspace/engine", "@workspace/schemas"],
+		noExternal: [
+			"react",
+			"react-dom",
+			"@tanstack/react-router",
+			"@workspace/ui",
+			"@workspace/engine",
+			"@workspace/schemas",
+		],
 	},
 	plugins: [
 		devtools(),
