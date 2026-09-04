@@ -6,20 +6,16 @@ import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
 	resolve: {
 		tsconfigPaths: true,
 		dedupe: ["react", "react-dom"],
 	},
 	ssr: {
-		noExternal: [
-			"react",
-			"react-dom",
-			"@tanstack/react-router",
-			"@workspace/ui",
-			"@workspace/engine",
-			"@workspace/schemas",
-		],
+		noExternal:
+			command === "build"
+				? true
+				: ["@workspace/ui", "@workspace/engine", "@workspace/schemas"],
 	},
 	plugins: [
 		devtools(),
@@ -29,4 +25,4 @@ export default defineConfig({
 		viteReact(),
 		babel({ presets: [reactCompilerPreset()] }),
 	],
-});
+}));
