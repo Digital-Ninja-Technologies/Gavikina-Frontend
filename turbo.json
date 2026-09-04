@@ -6,7 +6,7 @@
       "dependsOn": ["^build"],
       "env": ["VITE_API_BASE_URL"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".output/**", "dist/**"]
+      "outputs": [".output/**", "dist/**", ".vercel/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
