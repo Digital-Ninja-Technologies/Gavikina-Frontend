@@ -3,8 +3,8 @@ export function getStableDateRange(to = 7) {
 	const start = new Date();
 	start.setDate(end.getDate() - to);
 
-	const startDate = start.toISOString().split("T")[0];
-	const endDate = end.toISOString().split("T")[0];
+	const startDate = start.toLocaleDateString("en-CA");
+	const endDate = end.toLocaleDateString("en-CA");
 
 	const label = `${start.toLocaleDateString("en-GB", {
 		day: "numeric",
