@@ -141,13 +141,13 @@ function Home() {
 							</Button>
 						</div>
 
-						<div className="mt-12 flex flex-wrap gap-6 sm:gap-8">
+						<div className="mt-12 flex flex-wrap gap-6">
 							{HERO_FACTS.map((f) => (
 								<div className="flex flex-col gap-1" key={f.label}>
-									<span className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
+									<span className="text-xl font-semibold tracking-tight text-white">
 										{f.value}
 									</span>
-									<span className="max-w-[24ch] text-xs leading-snug text-white/60 sm:text-sm">
+									<span className="max-w-[22ch] text-xs leading-snug text-white/60">
 										{f.label}
 									</span>
 								</div>
