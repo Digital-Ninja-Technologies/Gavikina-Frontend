@@ -4,7 +4,7 @@ import { useNavigate, useRouter } from "@tanstack/react-router";
 import type { AdminLoginValues } from "@workspace/schemas";
 import { adminLoginSchema } from "@workspace/schemas";
 import { Button } from "@workspace/ui/components/button";
-import { FormInput } from "@workspace/ui/components/form-fields"; // Adjust if you use a specific PasswordInput
+import { FormInput } from "@workspace/ui/components/form-fields";
 import { toast } from "@workspace/ui/components/toast";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,8 @@ export function LoginForm({ redirectUrl }: { redirectUrl?: string }) {
 
 	const mutation = useMutation({
 		mutationFn: loginAdmin,
-		onSuccess: async () => {
+    onSuccess: async (data) => {
+      console.log(data)
 			toast.add({ title: "Sign in successful", type: "success" });
 
 			await queryClient.query({

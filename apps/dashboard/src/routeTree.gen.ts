@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProtectedIndexRouteImport } from './routes/_protected/index'
 import { Route as ProtectedCalculatorSettingsRouteImport } from './routes/_protected/calculator-settings'
 import { Route as ProtectedProjectsRouteImport } from './routes/_protected/projects'
+import { Route as ProtectedAdminsIndexRouteImport } from './routes/_protected/admins/index'
 import { Route as ProtectedEnquiriesIndexRouteImport } from './routes/_protected/enquiries/index'
 import { Route as ProtectedEnquiriesIdRouteImport } from './routes/_protected/enquiries/$id'
 
@@ -42,6 +43,11 @@ const ProtectedProjectsRoute = ProtectedProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
+const ProtectedAdminsIndexRoute = ProtectedAdminsIndexRouteImport.update({
+  id: '/admins/',
+  path: '/admins/',
+  getParentRoute: () => ProtectedRouteRoute,
+} as any)
 const ProtectedEnquiriesIndexRoute = ProtectedEnquiriesIndexRouteImport.update({
   id: '/enquiries/',
   path: '/enquiries/',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/calculator-settings': typeof ProtectedCalculatorSettingsRoute
   '/projects': typeof ProtectedProjectsRoute
   '/enquiries/$id': typeof ProtectedEnquiriesIdRoute
+  '/admins/': typeof ProtectedAdminsIndexRoute
   '/enquiries/': typeof ProtectedEnquiriesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/projects': typeof ProtectedProjectsRoute
   '/': typeof ProtectedIndexRoute
   '/enquiries/$id': typeof ProtectedEnquiriesIdRoute
+  '/admins': typeof ProtectedAdminsIndexRoute
   '/enquiries': typeof ProtectedEnquiriesIndexRoute
 }
 export interface FileRoutesById {
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/_protected/projects': typeof ProtectedProjectsRoute
   '/_protected/': typeof ProtectedIndexRoute
   '/_protected/enquiries/$id': typeof ProtectedEnquiriesIdRoute
+  '/_protected/admins/': typeof ProtectedAdminsIndexRoute
   '/_protected/enquiries/': typeof ProtectedEnquiriesIndexRoute
 }
 export interface FileRouteTypes {
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/calculator-settings'
     | '/projects'
     | '/enquiries/$id'
+    | '/admins/'
     | '/enquiries/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/'
     | '/enquiries/$id'
+    | '/admins'
     | '/enquiries'
   id:
     | '__root__'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '/_protected/projects'
     | '/_protected/'
     | '/_protected/enquiries/$id'
+    | '/_protected/admins/'
     | '/_protected/enquiries/'
   fileRoutesById: FileRoutesById
 }
@@ -149,6 +161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedProjectsRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
+    '/_protected/admins/': {
+      id: '/_protected/admins/'
+      path: '/admins'
+      fullPath: '/admins/'
+      preLoaderRoute: typeof ProtectedAdminsIndexRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
     '/_protected/enquiries/': {
       id: '/_protected/enquiries/'
       path: '/enquiries'
@@ -171,6 +190,7 @@ interface ProtectedRouteRouteChildren {
   ProtectedProjectsRoute: typeof ProtectedProjectsRoute
   ProtectedIndexRoute: typeof ProtectedIndexRoute
   ProtectedEnquiriesIdRoute: typeof ProtectedEnquiriesIdRoute
+  ProtectedAdminsIndexRoute: typeof ProtectedAdminsIndexRoute
   ProtectedEnquiriesIndexRoute: typeof ProtectedEnquiriesIndexRoute
 }
 
@@ -179,6 +199,7 @@ const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedProjectsRoute: ProtectedProjectsRoute,
   ProtectedIndexRoute: ProtectedIndexRoute,
   ProtectedEnquiriesIdRoute: ProtectedEnquiriesIdRoute,
+  ProtectedAdminsIndexRoute: ProtectedAdminsIndexRoute,
   ProtectedEnquiriesIndexRoute: ProtectedEnquiriesIndexRoute,
 }
 
