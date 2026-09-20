@@ -17,59 +17,66 @@ import { enquiryDetailQueryOptions } from "@/modules/enquiries/query-options"
 
 function fieldsFor(open: Lead): [string, string][] {
   const fields: [string, string][] = []
+
   if (open.type === "Customer") {
-    fields.push(["Property type", open.property || ""])
-    fields.push(["Reason for solar", open.reason || "Not given"])
+    fields.push(["Property type", open.property || "Not specified"])
+    fields.push(["Reason for solar", open.reason || "Not specified"])
     fields.push([
       "What should the system power?",
       open.appliances?.length
         ? open.appliances.map((a) => a[0]).join(", ")
-        : "Not reached",
+        : "Not specified",
     ])
-    fields.push(["Backup duration", open.backup || "Not reached"])
+    fields.push(["Backup duration", open.backup || "Not specified"])
     fields.push([
       "Monthly fuel spend",
-      open.fuel ? naira(open.fuel) : "Not reached",
+      open.fuel ? naira(open.fuel) : "Not specified",
     ])
-    fields.push(["Preferred payment", open.payment || "Not reached"])
+    fields.push(["Preferred payment", open.payment || "Not specified"])
     fields.push([
       "Site inspection",
       open.completed
         ? open.inspection
           ? "Requested"
           : "Not requested"
-        : "Not reached",
+        : "Not specified",
     ])
-    fields.push([
-      "Phone",
-      open.phone || "Not captured (dropped before contact step)",
-    ])
+    fields.push(["Phone", open.phone || "Not captured"])
     fields.push(["Email", open.email || "Not captured"])
   } else if (open.type === "Agent") {
-    fields.push(["Location", open.area || ""])
-    fields.push(["Occupation", open.occupation || ""])
-    fields.push(["Phone", open.phone || ""])
-    fields.push(["Email", open.email || ""])
-    fields.push(["Why they applied", open.reason || ""])
+    fields.push(["Location", open.area || "Not specified"])
+    fields.push(["Occupation", open.occupation || "Not specified"])
+    fields.push(["Phone", open.phone || "Not captured"])
+    fields.push(["Email", open.email || "Not captured"])
+    fields.push(["Why they applied", open.reason || "Not specified"])
   } else if (open.type === "Career") {
-    fields.push(["Applying for", open.role || ""])
-    fields.push(["Location", open.area || ""])
-    fields.push(["Phone", open.phone || ""])
-    fields.push(["Email", open.email || ""])
-    fields.push([
-      "CV",
-      open.cv ? `(download available below)` : "Not attached",
-    ])
-    fields.push(["Relevant experience", open.about || ""])
+    fields.push(["Applying for", open.role || "Not specified"])
+    fields.push(["Location", open.area || "Not specified"])
+    fields.push(["Phone", open.phone || "Not captured"])
+    fields.push(["Email", open.email || "Not captured"])
+    fields.push(["CV", open.cv ? "(download available below)" : "Not attached"])
+    fields.push(["Relevant experience", open.about || "Not specified"])
   } else if (open.type === "Investor") {
-    fields.push(["Phone", open.phone || "Not given"])
-    fields.push(["Email", open.email || "Not given"])
-    fields.push(["What they are looking for", open.message || ""])
+    fields.push(["Phone", open.phone || "Not captured"])
+    fields.push(["Email", open.email || "Not captured"])
+    fields.push(["What they are looking for", open.message || "Not specified"])
   } else {
-    fields.push(["Email or phone", open.contact || "Not given"])
-    fields.push(["Message", open.message || ""])
+    // Contact enquiry
+    fields.push(["Phone", open.phone || "Not captured"])
+    fields.push(["Email", open.email || "Not captured"])
+    fields.push(["Message", open.message || "Not specified"])
   }
-  fields.push(["Received", open.when])
+
+  fields.push([
+    "Received",
+    open.when
+      ? new Date(open.when).toLocaleString("en-GB", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })
+      : "Unknown",
+  ])
+
   return fields
 }
 
@@ -91,7 +98,7 @@ export function EnquiryDetailContent({
     if (open.cv?.startsWith("http")) {
       window.open(open.cv, "_blank")
     } else {
-      const body = `CV placeholder for ${open.name}\n\nRole applied for: ${open.role}\nLocation: ${open.area}\nPhone: ${open.phone}\nEmail: ${open.email}\nSubmitted: ${open.when}\n\n${open.about}`
+      const body = `CV placeholder for ${open.name}\n\nRole applied for: ${open.role}\nLocation: ${open.area}\nPhone: ${open.phone || "Not captured"}\nEmail: ${open.email || "Not captured"}\nSubmitted: ${open.when}\n\n${open.about}`
       download(`${(open.cv || "cv").replace(/\.pdf$/, "")}.txt`, body)
     }
   }
@@ -103,15 +110,16 @@ export function EnquiryDetailContent({
         : `Abandoned assessment · last activity ${new Date(open.when).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}`
       : `${open.type} enquiry · ${new Date(open.when).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}`
 
-  const phoneHref = open.phone ? `tel:${open.phone.replace(/\s/g, "")}` : "#"
-  const mailTarget =
-    open.email || (open.contact?.includes("@") ? open.contact : "")
-  const mailHref = mailTarget ? `mailto:${mailTarget}` : "#"
+  const hasPhone = Boolean(open.phone)
+  const hasEmail = Boolean(open.email)
+
+  const phoneHref = hasPhone ? `tel:${open.phone!.replace(/\s/g, "")}` : "#"
+  const mailHref = hasEmail ? `mailto:${open.email}` : "#"
 
   const statusNote =
-    open.phone || open.email || open.contact
+    hasPhone || hasEmail
       ? "Contact details captured. Reach out using the details below."
-      : "No contact details were captured before drop-off. Only the entered assessment data is available."
+      : "No valid contact details were captured for this submission."
 
   return (
     <div className="flex animate-gv-fade flex-col gap-6">
@@ -141,7 +149,7 @@ export function EnquiryDetailContent({
           className="w-full sm:w-auto"
           onClick={() => download(`gavikina-${open.id}.csv`, csvFor([open]))}
         >
-          <Download /> Download CSV
+          <Download className="size-4" /> Download CSV
         </Button>
       </div>
 
@@ -157,7 +165,7 @@ export function EnquiryDetailContent({
                     Calculated size
                   </span>
                   <div className="mt-1.5 text-2xl font-semibold tracking-tight text-navy">
-                    {open.size}
+                    {open.size || "Not specified"}
                   </div>
                 </CardContent>
               </Card>
@@ -167,7 +175,7 @@ export function EnquiryDetailContent({
                     Price range
                   </span>
                   <div className="mt-1.5 text-lg font-semibold tracking-tight text-amber">
-                    {open.price}
+                    {open.price || "Not specified"}
                   </div>
                 </CardContent>
               </Card>
@@ -177,7 +185,7 @@ export function EnquiryDetailContent({
                     Fuel spend
                   </span>
                   <div className="mt-1.5 text-lg font-semibold tracking-tight text-navy">
-                    {open.fuel ? `${naira(open.fuel)} / mo` : "Not reached"}
+                    {open.fuel ? `${naira(open.fuel)} / mo` : "Not specified"}
                   </div>
                 </CardContent>
               </Card>
@@ -205,7 +213,8 @@ export function EnquiryDetailContent({
                       {label}
                     </dt>
                     <dd className="text-sm font-medium text-navy sm:text-right">
-                      {label === "Property type" && value ? (
+                      {label === "Property type" &&
+                      value !== "Not specified" ? (
                         <Badge
                           variant="outline"
                           className="border-navy/20 text-navy/70 capitalize"
@@ -217,7 +226,7 @@ export function EnquiryDetailContent({
                           {value}
                         </span>
                       ) : label.includes("system power") &&
-                        value !== "Not reached" ? (
+                        value !== "Not specified" ? (
                         <div className="flex flex-wrap gap-1.5 sm:justify-end">
                           {value.split(",").map((v) => {
                             const clean = v.trim()
@@ -234,7 +243,16 @@ export function EnquiryDetailContent({
                           })}
                         </div>
                       ) : (
-                        value
+                        <span
+                          className={cn(
+                            value === "Not captured" ||
+                              value === "Not specified"
+                              ? "font-normal text-navy/40 italic"
+                              : "text-navy"
+                          )}
+                        >
+                          {value}
+                        </span>
                       )}
                     </dd>
                   </div>
@@ -255,7 +273,7 @@ export function EnquiryDetailContent({
                     {open.cv}
                   </span>
                   <span className="mt-0.5 text-xs text-navy/50">
-                    CV attachment · {open.cvSize}
+                    CV attachment · {open.cvSize || "Document"}
                   </span>
                 </div>
               </div>
@@ -345,7 +363,7 @@ export function EnquiryDetailContent({
             <CardContent className="flex flex-col gap-5">
               <div className="flex items-start gap-2.5">
                 <div className="mt-0.5">
-                  {open.phone || open.email || open.contact ? (
+                  {hasPhone || hasEmail ? (
                     <Info className="size-4 text-amber" />
                   ) : (
                     <Info className="size-4 text-navy/40" />
@@ -357,26 +375,35 @@ export function EnquiryDetailContent({
               </div>
 
               <div className="flex flex-col gap-2.5 border-t border-navy/5">
+                {/* Phone Button */}
                 <Button
                   nativeButton={false}
                   size="default"
                   className="w-full justify-start gap-3"
-                  disabled={!!open.phone}
-                  render={<a href={phoneHref} />}
+                  disabled={!hasPhone}
+                  // biome-ignore lint/a11y/useAnchorContent: <...>
+                  render={hasPhone ? <a href={phoneHref} /> : <span />}
                 >
                   <Phone className="size-4 opacity-70" />
-                  <span>Call {open.phone || "unavailable"}</span>
+                  <span>
+                    {hasPhone ? `Call ${open.phone}` : "Phone not captured"}
+                  </span>
                 </Button>
+
+                {/* Email Button */}
                 <Button
                   variant="outline"
                   size="default"
                   className="w-full justify-start gap-3"
                   nativeButton={false}
-                  disabled={!!open.email}
-                  render={<a href={mailHref} />}
+                  disabled={!hasEmail}
+                  // biome-ignore lint/a11y/useAnchorContent: <...>
+                  render={hasEmail ? <a href={mailHref} /> : <span />}
                 >
                   <Mail className="size-4 opacity-70" />
-                  <span>Send an email</span>
+                  <span>
+                    {hasEmail ? `Email ${open.email}` : "Email not captured"}
+                  </span>
                 </Button>
               </div>
             </CardContent>
