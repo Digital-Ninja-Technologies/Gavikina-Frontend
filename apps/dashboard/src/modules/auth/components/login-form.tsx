@@ -24,8 +24,7 @@ export function LoginForm({ redirectUrl }: { redirectUrl?: string }) {
 
 	const mutation = useMutation({
 		mutationFn: loginAdmin,
-    onSuccess: async (data) => {
-      console.log(data)
+    onSuccess: async () => {
 			toast.add({ title: "Sign in successful", type: "success" });
 
 			await queryClient.query({
