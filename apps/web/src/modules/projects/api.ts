@@ -51,6 +51,29 @@ export const getProjects = createServerFn({ method: "GET" })
 		return apiClient<ProjectsResponse>(endpoint);
 	});
 
+export const getFeaturedCaseStudy = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const response = await apiClient<ProjectsResponse>("/projects?limit=50");
+		const items = response.data || [];
+
+		const caseStudies = items.filter(
+			(project) => project.isCaseStudy && project.isActive !== false,
+		);
+
+		if (caseStudies.length === 0) {
+			return null;
+		}
+
+		caseStudies.sort((a, b) => {
+			const timeA = new Date(a.createdAt || a.updatedAt).getTime();
+			const timeB = new Date(b.createdAt || b.updatedAt).getTime();
+			return timeB - timeA;
+		});
+
+		return caseStudies[0] || null;
+	},
+);
+
 export const getProjectById = createServerFn({ method: "GET" })
 	.validator((data: unknown) => z.string().parse(data))
 	.handler(async ({ data: id }) => {

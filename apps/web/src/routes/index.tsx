@@ -1,7 +1,14 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { fmtRange } from "@workspace/engine";
+import { fmt } from "@workspace/engine";
+import { Badge } from "@workspace/ui/components/badge";
 import { Button, buttonVariants } from "@workspace/ui/components/button";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@workspace/ui/components/card";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { cn } from "@workspace/ui/lib/utils";
 import {
@@ -16,11 +23,12 @@ import {
 	catalogueFormulaQueryOptions,
 	catalogueTiersQueryOptions,
 } from "#/modules/catalogue/query-options";
+import ProjectCard from "#/modules/projects/components/project-card";
 import { projectsQueryOptions } from "#/modules/projects/query-options";
 import { AsyncBoundary } from "../components/async-boundary";
 import ImageSlot from "../components/ImageSlot";
 import Reveal from "../components/Reveal";
-import { HERO_SLOTS, PROJECT_PHOTOS } from "../lib/content";
+import { HERO_SLOTS } from "../lib/content";
 import SolarCalculator from "../modules/calculator/components/SolarCalculator";
 import { openAssess, openCalc } from "../store/modal";
 
@@ -104,21 +112,21 @@ function Home() {
 			{/* HERO */}
 			<section className="relative overflow-hidden bg-ink text-white">
 				<div
-					className="absolute inset-0 opacity-50 bg-size-[56px_56px] mask-[radial-gradient(ellipse_70%_80%_at_15%_30%,#000,transparent)]"
+					className="absolute inset-0 mask-[radial-gradient(ellipse_70%_80%_at_15%_30%,#000,transparent)] bg-size-[56px_56px] opacity-50"
 					style={{
 						backgroundImage:
 							"linear-gradient(rgba(46,158,69,0.16) 1px, transparent 1px), linear-gradient(90deg, rgba(46,158,69,0.16) 1px, transparent 1px)",
 					}}
 				/>
-				<div className="pointer-events-none absolute -right-16 -top-36 size-128 rounded-full bg-[radial-gradient(circle_at_38%_32%,rgba(245,166,35,0.3),rgba(245,166,35,0)_66%)]" />
+				<div className="pointer-events-none absolute -top-36 -right-16 size-128 rounded-full bg-[radial-gradient(circle_at_38%_32%,rgba(245,166,35,0.3),rgba(245,166,35,0)_66%)]" />
 
 				<div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:px-8 lg:py-24">
 					<div>
-						<span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-amber">
+						<span className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest text-amber uppercase">
 							<span className="h-px w-6 bg-amber" />
 							Homes &amp; businesses across Nigeria
 						</span>
-						<h1 className={"mt-4 section-title max-w-[16ch] leading-[1.01]"}>
+						<h1 className={"section-title mt-4 max-w-[16ch] leading-[1.01]"}>
 							Stop renting your power from a generator.
 						</h1>
 						<p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
@@ -171,10 +179,10 @@ function Home() {
 							))}
 						</div>
 						<div className="absolute -bottom-6 -left-6 z-10 max-w-64 rounded-2xl bg-white p-5 text-navy shadow-2xl">
-							<span className="text-[11px] font-semibold uppercase tracking-widest text-navy/20">
+							<span className="text-[11px] font-semibold tracking-widest text-navy/20 uppercase">
 								Typical outcome
 							</span>
-							<p className="mt-1 text-sm font-medium leading-snug text-navy">
+							<p className="mt-1 text-sm leading-snug font-medium text-navy">
 								A 3.5kVA system replaces the generator for most two-bedroom
 								homes.
 							</p>
@@ -212,10 +220,10 @@ function Home() {
 				<div className="section-wrapper py-0">
 					<div className="mb-8 flex flex-wrap items-end justify-between gap-6">
 						<div>
-							<span className="text-xs font-semibold uppercase tracking-widest text-green">
+							<span className="text-xs font-semibold tracking-widest text-green uppercase">
 								Solar calculator
 							</span>
-							<h2 className="mt-2 max-w-lg leading-[1.2] text-2xl font-semibold tracking-tight text-navy sm:text-3xl lg:text-4xl">
+							<h2 className="mt-2 max-w-lg text-2xl leading-[1.2] font-semibold tracking-tight text-navy sm:text-3xl lg:text-4xl">
 								Size your system without leaving this page.
 							</h2>
 						</div>
@@ -228,7 +236,7 @@ function Home() {
 			<section className="section-wrapper">
 				<div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 					<div>
-						<span className="text-xs font-semibold uppercase tracking-widest text-green">
+						<span className="text-xs font-semibold tracking-widest text-green uppercase">
 							System tiers
 						</span>
 						<h2 className="mt-2 text-2xl font-semibold tracking-tight text-navy sm:text-3xl lg:text-4xl">
@@ -306,7 +314,7 @@ function Home() {
 					to="/how-it-works"
 					className={cn(
 						buttonVariants({ variant: "link" }),
-						"mt-6 inline-flex items-center hover:no-underline text-sm font-semibold text-green transition-colors hover:text-green-dark",
+						"mt-6 inline-flex items-center text-sm font-semibold text-green transition-colors hover:text-green-dark hover:no-underline",
 					)}
 				>
 					The full process, step by step <ArrowRight />
@@ -346,27 +354,68 @@ function HomeTiers() {
 	const { data: tiers } = useSuspenseQuery(catalogueTiersQueryOptions());
 
 	return (
-		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{tiers.map((t, i) => (
 				<Reveal key={t.id} delay={i * 50}>
-					<div className="flex h-full flex-col gap-3 rounded-2xl border border-navy/10 bg-white p-6">
-						<span className="text-2xl font-semibold tracking-tight text-navy">
-							{t.name}
-						</span>
-						<span className="text-sm font-semibold text-green">
-							{fmtRange(t)}
-						</span>
-						<p className="flex-1 text-xs leading-relaxed text-navy/70 sm:text-sm">
-							{t.notes}
-						</p>
-						<Button
-							variant={"link"}
-							className="border-0 border-t border-navy/10 pt-3 text-left text-xs font-semibold text-green transition-colors hover:text-green-dark px-0 items-start justify-start rounded-none"
-							onClick={openCalc}
-						>
-							Check my fit <ArrowRight />
-						</Button>
-					</div>
+					<Card
+						key={t.id}
+						className="group relative flex flex-col justify-between gap-4 border-navy/10 bg-white py-4 shadow-xs transition-all hover:border-navy/25 hover:shadow-md"
+					>
+						<CardHeader>
+							<div className="flex items-start justify-between gap-2">
+								<div>
+									<CardTitle className="text-base font-semibold text-navy">
+										{t.name}
+									</CardTitle>
+									<span className="text-xs font-semibold text-green">
+										{t.size_kva} kVA continuous
+									</span>
+								</div>
+							</div>
+						</CardHeader>
+
+						<CardContent className="flex-1 gap-3">
+							<div>
+								<span className="text-[11px] font-semibold tracking-wider text-navy/40 uppercase">
+									Indicative Price
+								</span>
+								<div className="text-lg font-semibold text-navy">
+									{fmt(t.price_range_min)} – {fmt(t.price_range_max)}
+								</div>
+							</div>
+
+							<div>
+								<span className="text-[11px] font-semibold tracking-wider text-navy/40 uppercase">
+									Powers
+								</span>
+								<div className="mt-1 flex flex-wrap gap-1">
+									{t.typically_powers.map((item) =>
+										item.split(",").map((power, idx) => {
+											const trimmedPower = power.trim();
+											return (
+												<Badge
+													key={`${trimmedPower}-${
+														// biome-ignore lint/suspicious/noArrayIndexKey: <...>
+														idx
+													}`}
+													variant="outline"
+													className="border-navy/10 bg-cream/60 text-[11px] text-navy/80"
+												>
+													{trimmedPower}
+												</Badge>
+											);
+										}),
+									)}
+								</div>
+							</div>
+
+							{t.notes && (
+								<p className="line-clamp-2 text-xs leading-relaxed text-navy/60 italic">
+									{t.notes}
+								</p>
+							)}
+						</CardContent>
+					</Card>
 				</Reveal>
 			))}
 		</div>
@@ -395,51 +444,20 @@ function HomeTiersSkeleton() {
 	);
 }
 
-// Projects Component
 function HomeProjects() {
 	const { data: projectsResponse } = useSuspenseQuery(
 		projectsQueryOptions({ limit: 3 }),
 	);
-	const homeProjects = projectsResponse.data;
+
+	const projects = projectsResponse.data;
 
 	return (
 		<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-			{homeProjects.map((p, i) => {
-				const photo = PROJECT_PHOTOS[p.id] || PROJECT_PHOTOS.p1;
-				return (
-					<Reveal key={p.id} delay={i * 60}>
-						<div>
-							<div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-cream">
-								{p.photos && p.photos.length > 0 ? (
-									<img
-										src={p.photos[0]}
-										alt={`${p.title} — install`}
-										className="h-full w-full object-cover"
-									/>
-								) : (
-									<ImageSlot
-										src={photo.src}
-										placeholder={`${p.title} — install photo`}
-										credit={photo.credit}
-										creditHref={photo.creditHref}
-									/>
-								)}
-							</div>
-							<div className="mt-4 flex items-baseline justify-between gap-3">
-								<span className="text-base font-semibold tracking-tight text-navy">
-									{p.title}
-								</span>
-								<span className="shrink-0 text-xs font-semibold text-green sm:text-sm">
-									{p.systemSize}
-								</span>
-							</div>
-							<span className="text-xs text-navy/60 sm:text-sm">
-								{p.location}
-							</span>
-						</div>
-					</Reveal>
-				);
-			})}
+			{projects.map((project, index) => (
+				<Reveal key={project.id} delay={index * 60}>
+					<ProjectCard project={project} />
+				</Reveal>
+			))}
 		</div>
 	);
 }
@@ -448,14 +466,21 @@ function HomeProjectsSkeleton() {
 	return (
 		<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{[...Array(3)].map((_, i) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: <skeleton>
-				<div key={i}>
-					<Skeleton className="aspect-4/3 w-full rounded-2xl" />
-					<div className="mt-4 flex items-baseline justify-between gap-3">
-						<Skeleton className="h-5 w-2/3" />
-						<Skeleton className="h-4 w-1/4" />
+				<div
+					// biome-ignore lint/suspicious/noArrayIndexKey: <static>
+					key={i}
+					className="flex flex-col overflow-hidden rounded-2xl border border-navy/10 bg-white"
+				>
+					<Skeleton className="aspect-4/3 w-full rounded-none" />
+					<div className="flex flex-col gap-3 p-5">
+						<div className="flex items-center justify-between">
+							<Skeleton className="h-5 w-3/5" />
+							<Skeleton className="size-4" />
+						</div>
+						<Skeleton className="h-3 w-1/3" />
+						<Skeleton className="mt-1 h-8 w-full" />
+						<Skeleton className="mt-2 h-4 w-1/4 border-t border-navy/5 pt-3" />
 					</div>
-					<Skeleton className="mt-2 h-4 w-1/3" />
 				</div>
 			))}
 		</div>
