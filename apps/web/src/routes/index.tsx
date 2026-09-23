@@ -262,7 +262,7 @@ function Home() {
 
 			{/* RECENT PROJECTS */}
 			<section className="section-wrapper">
-				<div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+				<div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 					<h2 className="text-2xl font-semibold tracking-tight text-navy sm:text-3xl lg:text-4xl">
 						Recently commissioned
 					</h2>

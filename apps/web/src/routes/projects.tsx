@@ -315,7 +315,6 @@ function ProjectsGrid({
 		}),
 	);
 
-	console.log(response);
 	const projects = response.data;
 	const meta = response.meta;
 	const totalPages = Math.ceil(meta.total / meta.limit);
