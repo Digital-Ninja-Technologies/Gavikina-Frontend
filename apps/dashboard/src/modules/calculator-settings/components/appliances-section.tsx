@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Appliance } from "@workspace/engine";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
@@ -9,6 +10,13 @@ import {
 	CardTitle,
 } from "@workspace/ui/components/card";
 import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu";
+import {
 	Table,
 	TableBody,
 	TableCell,
@@ -16,16 +24,63 @@ import {
 	TableHeader,
 	TableRow,
 } from "@workspace/ui/components/table";
-import { Pencil, Plus, Zap } from "lucide-react";
+import { toast } from "@workspace/ui/components/toast";
+import { MoreVertical, Pencil, Plus, Trash2, Zap } from "lucide-react";
+import { useConfirm } from "#/components/confirm-provider";
+import { deleteApplianceApi } from "@/modules/catalogue/api";
+import { catalogueKeys } from "@/modules/catalogue/query-options";
 import { openDialog } from "@/store/dialog-store";
 
 export function AppliancesSection({ appliances }: { appliances: Appliance[] }) {
+	const queryClient = useQueryClient();
+	const confirm = useConfirm();
+
+	const deleteMutation = useMutation({
+		mutationFn: deleteApplianceApi,
+		onSuccess: () => {
+			toast.add({
+				title: "Appliance Deleted",
+				description: "The appliance has been removed from the catalogue.",
+				type: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: catalogueKeys.appliances() });
+		},
+		onError: (error) => {
+			toast.add({
+				title: "Failed to Delete Appliance",
+				description:
+					error instanceof Error
+						? error.message
+						: "There was a problem deleting this appliance.",
+				type: "error",
+			});
+		},
+	});
+
+	const handleEdit = (id: string) => {
+		openDialog("APPLIANCE_FORM", { applianceId: id });
+	};
+
+	const handleDelete = async (appliance: Appliance) => {
+		const isConfirmed = await confirm({
+			title: `Delete "${appliance.name}"?`,
+			description:
+				"This appliance will be removed from the public calculator defaults. This action cannot be undone.",
+			confirmText: "Delete Appliance",
+			variant: "destructive",
+		});
+
+		if (isConfirmed) {
+			deleteMutation.mutate(appliance.id);
+		}
+	};
+
 	return (
 		<Card className="border-navy/10 shadow-xs">
 			<CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-				<div className="space-y-3">
+				<div className="space-y-2">
 					<div className="flex items-center gap-2 text-navy">
-						<Zap className="size-5 text-amber" />
+						<Zap className="size-5 text-green" />
 						<CardTitle className="text-base font-semibold">
 							Appliance Catalog &amp; Defaults
 						</CardTitle>
@@ -63,7 +118,7 @@ export function AppliancesSection({ appliances }: { appliances: Appliance[] }) {
 								Default Qty
 							</TableHead>
 							<TableHead className="w-16 text-right text-xs font-semibold uppercase tracking-wider text-navy/60">
-								Edit
+								Actions
 							</TableHead>
 						</TableRow>
 					</TableHeader>
@@ -76,7 +131,7 @@ export function AppliancesSection({ appliances }: { appliances: Appliance[] }) {
 								<TableCell>
 									<Badge
 										variant="outline"
-										className="bg-navy/5 text-xs capitalize text-navy/70 border-navy/10"
+										className="border-navy/10 bg-navy/5 text-xs capitalize text-navy/70"
 									>
 										{a.category.replace("_", " ")}
 									</Badge>
@@ -88,17 +143,36 @@ export function AppliancesSection({ appliances }: { appliances: Appliance[] }) {
 									{a.default_quantity}
 								</TableCell>
 								<TableCell className="text-right">
-									<Button
-										type="button"
-										variant="ghost"
-										size="icon-sm"
-										aria-label={`Edit ${a.name}`}
-										onClick={() =>
-											openDialog("APPLIANCE_FORM", { applianceId: a.id })
-										}
-									>
-										<Pencil className="size-3.5 text-navy/60" />
-									</Button>
+									<DropdownMenu>
+										<DropdownMenuTrigger
+											render={
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													className="text-navy/40 hover:text-navy"
+												/>
+											}
+										>
+											<MoreVertical className="size-4" />
+										</DropdownMenuTrigger>
+										<DropdownMenuContent align="end" className="w-36">
+											<DropdownMenuItem
+												onClick={() => handleEdit(a.id)}
+												className="cursor-pointer text-xs"
+											>
+												<Pencil className="mr-2 size-3.5" />
+												Edit Appliance
+											</DropdownMenuItem>
+											<DropdownMenuSeparator />
+											<DropdownMenuItem
+												onClick={() => handleDelete(a)}
+												className="cursor-pointer text-xs text-destructive hover:text-background! focus:text-destructive"
+											>
+												<Trash2 className="mr-2 size-3.5" />
+												Delete
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
 								</TableCell>
 							</TableRow>
 						))}

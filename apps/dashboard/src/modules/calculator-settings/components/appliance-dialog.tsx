@@ -30,8 +30,6 @@ const applianceSchema = z.object({
 	default_quantity: z.coerce.number().min(0, "Cannot be negative"),
 });
 
-// type ApplianceFormValues = z.infer<typeof applianceSchema>;
-
 interface ApplianceDialogProps extends ComponentProps<typeof Dialog> {
 	applianceId?: string;
 }
@@ -41,7 +39,7 @@ const CATEGORY_OPTIONS = [
 	{ label: "Cooling & Air", value: "cooling" },
 	{ label: "Kitchen & Dining", value: "kitchen" },
 	{ label: "Electronics & Media", value: "entertainment" },
-	{ label: "Pumps & Heavy Duty", value: "heavy_duty" },
+	{ label: "Pumps & Heavy Duty", value: "utility" },
 	{ label: "Commercial / Business", value: "business" },
 ];
 
@@ -126,15 +124,15 @@ export function ApplianceDialog({
 
 	const onSubmit = form.handleSubmit((values) => {
 		if (applianceId) {
-			// PUT expects a map of changes keyed by ID
 			updateMutation.mutate({
 				[applianceId]: {
+					name: values.name,
+					category: values.category,
 					typical_wattage: values.typical_wattage,
 					default_quantity: values.default_quantity,
 				},
 			});
 		} else {
-			// POST expects specific keys
 			createMutation.mutate({
 				name: values.name,
 				category: values.category,
@@ -153,7 +151,7 @@ export function ApplianceDialog({
 					</DialogTitle>
 					<DialogDescription>
 						{applianceId
-							? "Adjust baseline wattage and suggested default quantities."
+							? "Adjust name, category, baseline wattage and default quantities."
 							: "Configure a new power consumption option for the calculator."}
 					</DialogDescription>
 				</DialogHeader>
@@ -168,7 +166,7 @@ export function ApplianceDialog({
 						name="name"
 						label="Appliance Name"
 						placeholder="e.g. Standing Fan, Refrigerator"
-						disabled={!!applianceId}
+						disabled={isPending}
 					/>
 
 					<FormSelect
@@ -177,7 +175,7 @@ export function ApplianceDialog({
 						label="Category"
 						options={CATEGORY_OPTIONS}
 						placeholder="Select category"
-						disabled={!!applianceId}
+						disabled={isPending}
 					/>
 
 					<div className="grid grid-cols-2 gap-4">
@@ -187,6 +185,7 @@ export function ApplianceDialog({
 							type="number"
 							label="Typical Watts (W)"
 							placeholder="150"
+							disabled={isPending}
 						/>
 						<FormInput
 							control={form.control}
@@ -194,6 +193,7 @@ export function ApplianceDialog({
 							type="number"
 							label="Default Quantity"
 							placeholder="1"
+							disabled={isPending}
 						/>
 					</div>
 				</form>

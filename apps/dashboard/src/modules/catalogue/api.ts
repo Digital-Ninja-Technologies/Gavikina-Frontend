@@ -49,11 +49,25 @@ export async function createAppliance(data: {
 }
 
 export async function updateAppliancesBulk(
-	data: Record<string, { typical_wattage?: number; default_quantity?: number }>,
+	data: Record<
+		string,
+		{
+			name?: string;
+			category?: string;
+			typical_wattage?: number;
+			default_quantity?: number;
+		}
+	>,
 ) {
 	return apiClient<ApiResponse<Appliance[]>>("/catalogue/appliances", {
 		method: "PUT",
 		body: JSON.stringify(data),
+	});
+}
+
+export async function deleteApplianceApi(id: string) {
+	return apiClient<ApiResponse<{ id: string }>>(`/catalogue/appliances/${id}`, {
+		method: "DELETE",
 	});
 }
 
