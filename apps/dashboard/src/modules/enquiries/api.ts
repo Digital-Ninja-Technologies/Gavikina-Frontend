@@ -44,3 +44,9 @@ export async function getEnquiryById(id: string) {
 export async function getAssessmentById(id: string) {
 	return apiClient<ApiResponse<any>>(`/assessment/${id}`);
 }
+
+export async function deleteEnquiry(id: string) {
+	return apiClient<ApiResponse<{ id: string }>>(`/enquiries/${id}`, {
+		method: "DELETE",
+	});
+}

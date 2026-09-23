@@ -21,7 +21,7 @@ import {
 	EnquiriesTableSkeleton,
 	EnquiryTableContent,
 } from "#/modules/enquiries/components/enquiries-table";
-import { enquiriesListQueryOptions } from "@/modules/enquiries/query-options";
+import { enquiriesListQueryOptions } from "#/modules/enquiries/query-options";
 
 export const enquiriesSearchSchema = z.object({
 	view: z.string().default("all").catch("all"),
