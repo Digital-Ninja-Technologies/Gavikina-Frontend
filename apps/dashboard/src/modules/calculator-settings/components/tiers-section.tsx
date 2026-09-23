@@ -141,7 +141,7 @@ export function TiersSection({ tiers }: { tiers: Tier[] }) {
 								<span className="text-[11px] font-semibold uppercase tracking-wider text-navy/40">
 									Indicative Price
 								</span>
-								<div className="text-sm font-semibold text-amber">
+								<div className="text-base font-semibold text-navy">
 									{fmt(t.price_range_min)} – {fmt(t.price_range_max)}
 								</div>
 							</div>
@@ -172,7 +172,7 @@ export function TiersSection({ tiers }: { tiers: Tier[] }) {
 							</div>
 
 							{t.notes && (
-								<p className="text-xs leading-relaxed text-navy/60 italic">
+							<p className="text-xs leading-relaxed text-navy/60 italic line-clamp-2 truncate">
 									{t.notes}
 								</p>
 							)}
