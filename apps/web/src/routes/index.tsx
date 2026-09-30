@@ -195,7 +195,10 @@ function Home() {
       {/* INSTALLATIONS COUNT */}
       <section className="overflow-hidden py-12 sm:py-16">
         <p className="text-center text-2xl font-semibold tracking-tight text-navy sm:text-3xl">
-          600+ Installations done nationwide.
+          <span aria-hidden="true" className="mr-2">
+            🇳🇬
+          </span>
+          600+ Installations done <span className="text-green">nationwide</span>.
         </p>
         <div className="mt-10">
           <InstallationsMarquee />
