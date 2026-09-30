@@ -127,7 +127,11 @@ function Home() {
               <span className="h-px w-6 bg-amber" />
               Homes &amp; businesses across Nigeria
             </span>
-            <h1 className={"section-title mt-4 max-w-[16ch] leading-[1.01]"}>
+            <h1
+              className={
+                "mt-4 max-w-[16ch] font-heading text-[2.1875rem] leading-[1.01] font-semibold tracking-tight sm:text-4xl lg:text-6xl"
+              }
+            >
               Stop renting your power from a generator.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
