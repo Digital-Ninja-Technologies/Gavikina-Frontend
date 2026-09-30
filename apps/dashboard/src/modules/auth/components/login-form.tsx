@@ -49,7 +49,7 @@ export function LoginForm({ redirectUrl }: { redirectUrl?: string }) {
 	};
 
 	return (
-		<div className="flex min-h-screen items-center justify-center bg-cream px-4 py-10">
+		<div className="flex min-h-screen items-center justify-center bg-navy px-4 py-10">
 			<div className="w-full max-w-md animate-gv-fade">
 				<img
 					src={`/logo-primary-ondark.svg`}
