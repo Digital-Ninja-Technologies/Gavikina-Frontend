@@ -27,6 +27,7 @@ import ProjectCard from "#/modules/projects/components/project-card"
 import { projectsQueryOptions } from "#/modules/projects/query-options"
 import { AsyncBoundary } from "../components/async-boundary"
 import ImageSlot from "../components/ImageSlot"
+import InstallationsMarquee from "../components/InstallationsMarquee"
 import Reveal from "../components/Reveal"
 import { HERO_SLOTS } from "../lib/content"
 import SolarCalculator from "../modules/calculator/components/SolarCalculator"
@@ -188,6 +189,16 @@ function Home() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* INSTALLATIONS COUNT */}
+      <section className="overflow-hidden py-12 sm:py-16">
+        <p className="text-center text-2xl font-semibold tracking-tight text-navy sm:text-3xl">
+          600+ Installations done nationwide.
+        </p>
+        <div className="mt-10">
+          <InstallationsMarquee />
         </div>
       </section>
 

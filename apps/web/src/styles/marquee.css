@@ -1,0 +1,12 @@
+@keyframes gv-marquee {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-50%);
+	}
+}
+
+.animate-gv-marquee {
+	animation: gv-marquee 36s linear infinite;
+}
