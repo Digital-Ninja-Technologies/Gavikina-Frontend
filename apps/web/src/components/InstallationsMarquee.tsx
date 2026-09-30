@@ -10,7 +10,7 @@ export default function InstallationsMarquee() {
 				{LOOP.map((photo, i) => (
 					<div
 						key={`${photo.src}-${i}`}
-						className="h-48 w-72 shrink-0 overflow-hidden rounded-2xl border border-navy/10 sm:h-56 sm:w-80"
+						className="h-[230px] w-[346px] shrink-0 overflow-hidden rounded-2xl border border-navy/10 sm:h-[269px] sm:w-96"
 					>
 						<img
 							src={photo.src}
