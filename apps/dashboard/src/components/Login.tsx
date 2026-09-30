@@ -19,7 +19,7 @@ export default function Login() {
   const canSignIn = form.formState.isValid;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-cream px-5 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-navy px-5 py-10">
       <div className="w-full max-w-105 animate-gv-fade">
         <img src={`${import.meta.env.BASE_URL}logo-primary-ondark.svg`} alt="Gavikina Energy" className="mx-auto block h-8 w-auto" />
         <div className="mt-6 rounded-3xl border border-navy/12 bg-white p-8.5 shadow-[0_18px_44px_-34px_rgba(16,19,40,.4)]">
