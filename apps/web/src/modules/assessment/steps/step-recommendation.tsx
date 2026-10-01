@@ -4,8 +4,9 @@ import { useSelector } from "@tanstack/react-store";
 import { fmt } from "@workspace/engine";
 import { Button } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, MessageCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { buildWhatsAppUrl } from "#/lib/whatsapp";
 import { closeModal } from "#/store/modal";
 import AssessmentFooter from "../components/assessment-footer";
 import { assessmentQueryOptions } from "../query-options";
@@ -231,6 +232,29 @@ export default function StepRecommendation() {
 							▌
 						</span>
 					</p>
+
+					<div className="mt-4 flex flex-col gap-3 border-t border-green/20 pt-4 sm:flex-row sm:items-center sm:justify-between">
+						<p className="text-xs leading-relaxed text-navy/70 sm:text-sm">
+							Contact us on WhatsApp now or wait till we reach out.
+						</p>
+						<Button
+							variant="primary"
+							size="sm"
+							className="w-full shrink-0 sm:w-auto"
+							nativeButton={false}
+							render={
+								<a
+									href={buildWhatsAppUrl(
+										"Hi, I just completed my solar assessment and would like to speak with your team.",
+									)}
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
+						>
+							<MessageCircle className="size-4" /> Chat on WhatsApp
+						</Button>
+					</div>
 				</div>
 			</div>
 

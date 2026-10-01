@@ -8,11 +8,11 @@ import {
 import { Button } from "@workspace/ui/components/button";
 import { MessageCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { buildWhatsAppUrl } from "../lib/whatsapp";
 
-const WHATSAPP_NUMBER = "2348145865720";
-const WHATSAPP_MESSAGE =
-	"I will love to go solar powered, I need more clarification.";
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+const WHATSAPP_URL = buildWhatsAppUrl(
+	"I will love to go solar powered, I need more clarification.",
+);
 
 const SEEN_KEY = "gv-welcome-popup-seen";
 
