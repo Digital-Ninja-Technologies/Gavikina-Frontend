@@ -56,7 +56,7 @@ export default function StepProperty() {
 		<div className="flex h-full flex-col justify-between animate-gv-fade">
 			<div>
 				<h3 className="text-2xl font-semibold tracking-tight text-navy sm:text-3xl">
-					Is this for a home or a business?
+					Is this for your home or office?
 				</h3>
 				<p className="mt-2 text-sm text-navy/70 sm:text-base">
 					It changes which appliances we show you and how we size for peak
