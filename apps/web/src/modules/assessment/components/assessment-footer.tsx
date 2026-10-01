@@ -1,10 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "@tanstack/react-store";
 import { Button } from "@workspace/ui/components/button";
 import { toast } from "@workspace/ui/components/toast";
 import { cn } from "@workspace/ui/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { saveAssessmentStep } from "../api";
+import { assessmentKeys } from "../query-options";
 import { assessmentActions, assessmentStore } from "../store";
 
 interface AssessmentFooterProps {
@@ -26,10 +27,18 @@ export default function AssessmentFooter({
 }: AssessmentFooterProps) {
 	const uiStep = useSelector(assessmentStore, (s) => s.uiStep);
 	const sessionId = useSelector(assessmentStore, (s) => s.sessionId);
+	const queryClient = useQueryClient();
 
 	const stepMutation = useMutation({
 		mutationFn: saveAssessmentStep,
-		onSuccess: () => assessmentActions.nextStep(),
+		onSuccess: () => {
+			if (sessionId) {
+				queryClient.invalidateQueries({
+					queryKey: assessmentKeys.session(sessionId),
+				});
+			}
+			assessmentActions.nextStep();
+		},
 		// biome-ignore lint/suspicious/noExplicitAny: <any err>
 		onError: (error: any) => {
 			toast.add({

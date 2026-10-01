@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "@tanstack/react-store";
 import { REASONS } from "@workspace/engine";
 import { toast } from "@workspace/ui/components/toast";
@@ -6,11 +6,13 @@ import { cn } from "@workspace/ui/lib/utils";
 import { Loader2 } from "lucide-react";
 import { saveAssessmentStep } from "../api";
 import AssessmentFooter from "../components/assessment-footer";
+import { assessmentKeys } from "../query-options";
 import { assessmentActions, assessmentStore } from "../store";
 
 export default function StepReason() {
 	const reason = useSelector(assessmentStore, (s) => s.reason);
 	const sessionId = useSelector(assessmentStore, (s) => s.sessionId);
+	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
 		mutationFn: async (selectedId: string) => {
@@ -30,6 +32,11 @@ export default function StepReason() {
 		},
 		onSuccess: (selectedId) => {
 			assessmentActions.updateField("reason", selectedId);
+			if (sessionId) {
+				queryClient.invalidateQueries({
+					queryKey: assessmentKeys.session(sessionId),
+				});
+			}
 			assessmentActions.nextStep();
 		},
 		onError: (error: any) => {

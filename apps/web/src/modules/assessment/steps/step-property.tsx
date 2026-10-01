@@ -1,15 +1,17 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "@tanstack/react-store";
 import { toast } from "@workspace/ui/components/toast";
 import { cn } from "@workspace/ui/lib/utils";
 import { Loader2 } from "lucide-react";
 import { saveAssessmentStep, startAssessmentSession } from "../api";
 import AssessmentFooter from "../components/assessment-footer";
+import { assessmentKeys } from "../query-options";
 import { assessmentActions, assessmentStore } from "../store";
 
 export default function StepProperty() {
 	const property = useSelector(assessmentStore, (s) => s.property);
 	const sessionId = useSelector(assessmentStore, (s) => s.sessionId);
+	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
 		mutationFn: async (selectedId: "home" | "business") => {
@@ -33,6 +35,12 @@ export default function StepProperty() {
 		},
 		onSuccess: (selectedId) => {
 			assessmentActions.updateField("property", selectedId);
+			const currentSessionId = assessmentStore.state.sessionId;
+			if (currentSessionId) {
+				queryClient.invalidateQueries({
+					queryKey: assessmentKeys.session(currentSessionId),
+				});
+			}
 			assessmentActions.nextStep();
 		},
 		onError: (error: any) => {

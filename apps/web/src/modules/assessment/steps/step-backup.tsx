@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "@tanstack/react-store";
 import { BACKUP_OPTIONS } from "@workspace/engine";
 import { toast } from "@workspace/ui/components/toast";
@@ -6,11 +6,13 @@ import { cn } from "@workspace/ui/lib/utils";
 import { Loader2 } from "lucide-react";
 import { saveAssessmentStep } from "../api";
 import AssessmentFooter from "../components/assessment-footer";
+import { assessmentKeys } from "../query-options";
 import { assessmentActions, assessmentStore } from "../store";
 
 export default function StepBackup() {
 	const backupHours = useSelector(assessmentStore, (s) => s.backupHours);
 	const sessionId = useSelector(assessmentStore, (s) => s.sessionId);
+	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
 		mutationFn: async (selectedHours: number) => {
@@ -29,6 +31,11 @@ export default function StepBackup() {
 		onSuccess: (selectedHours) => {
 			// Update the store with the number and advance
 			assessmentActions.updateField("backupHours", selectedHours);
+			if (sessionId) {
+				queryClient.invalidateQueries({
+					queryKey: assessmentKeys.session(sessionId),
+				});
+			}
 			assessmentActions.nextStep();
 		},
 		onError: (error: any) => {
