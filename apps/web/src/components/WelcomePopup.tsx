@@ -56,7 +56,7 @@ export default function WelcomePopup() {
 				</span>
 
 				<DialogTitle className="mt-4 text-xl font-semibold tracking-tight text-navy">
-					Skip the assessment?
+					Skip the assessment
 				</DialogTitle>
 				<DialogDescription className="mt-2 text-sm leading-relaxed text-navy/70">
 					If you'd rather not go through the full assessment, talk to a team
