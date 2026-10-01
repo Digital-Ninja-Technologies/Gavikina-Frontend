@@ -29,7 +29,7 @@ import { AsyncBoundary } from "../components/async-boundary"
 import ImageSlot from "../components/ImageSlot"
 import InstallationsMarquee from "../components/InstallationsMarquee"
 import Reveal from "../components/Reveal"
-import { HERO_SLOTS } from "../lib/content"
+import { CASE_STUDY_PHOTO, HERO_SLOTS } from "../lib/content"
 import SolarCalculator from "../modules/calculator/components/SolarCalculator"
 import { openAssess, openCalc } from "../store/modal"
 
@@ -349,6 +349,14 @@ function Home() {
 
       {/* CTA */}
       <section className="relative overflow-hidden bg-navy text-white">
+        <img
+          src={CASE_STUDY_PHOTO.src}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-navy/85" />
         <div className="pointer-events-none absolute -bottom-40 left-1/3 size-112 rounded-full bg-[radial-gradient(circle_at_40%_35%,rgba(46,158,69,0.4),rgba(46,158,69,0)_68%)]" />
         <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-4 py-16 sm:px-6 sm:py-20 lg:flex-row lg:items-center lg:px-8">
           <div>
