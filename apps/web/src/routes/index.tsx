@@ -211,9 +211,14 @@ function Home() {
 
       {/* VALUE PROPS */}
       <section className="section-wrapper">
-        <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight text-navy sm:text-3xl lg:text-4xl">
-          <span className="font-bold text-green">Power</span> your own
-        </h2>
+        <div className="mb-8 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight text-navy sm:text-3xl lg:text-4xl">
+            <span className="font-bold text-green">Power</span> your own
+          </h2>
+          <p className="section-description mx-auto mt-3">
+            for your home and office
+          </p>
+        </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {VALUE_PROPS.map((v, i) => {
             const Icon = v.icon
