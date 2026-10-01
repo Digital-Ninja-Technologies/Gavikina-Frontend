@@ -4,6 +4,7 @@ import type { Selection } from "@workspace/engine";
 export interface AssessmentState {
 	sessionId: string | null;
 	uiStep: number; // 0 to 7 (maps to API steps 1 to 8)
+	maxApiStep: number; // next step number the backend expects (last saved step + 1)
 	property: "home" | "business" | null;
 	reason: string | null;
 	selection: Selection;
@@ -20,6 +21,7 @@ const DRAFT_KEY = "gv_assessment_draft_v2";
 const initialState: AssessmentState = {
 	sessionId: null,
 	uiStep: 0,
+	maxApiStep: 0,
 	property: null,
 	reason: null,
 	selection: {},
@@ -37,7 +39,14 @@ const loadDraft = (): AssessmentState => {
 		const raw = localStorage.getItem(DRAFT_KEY);
 		if (raw) {
 			const parsed = JSON.parse(raw);
-			if (!parsed.done) return { ...initialState, ...parsed };
+			if (!parsed.done) {
+				const merged = { ...initialState, ...parsed };
+				// Drafts saved before maxApiStep existed won't have it — infer a
+				// safe floor from uiStep (1-indexed + 1) so edits right after
+				// loading don't regress below where the backend already is.
+				merged.maxApiStep = Math.max(merged.maxApiStep, merged.uiStep + 1);
+				return merged;
+			}
 		}
 	} catch {
 		/* ignore */
@@ -66,6 +75,17 @@ export const assessmentActions = {
 		assessmentStore.setState((s) => ({
 			...s,
 			uiStep: Math.max(s.uiStep - 1, 0),
+		}));
+	},
+	// Call with the step number that was just saved. The backend advances
+	// its own currentStep to (step + 1) on success, so we mirror that here —
+	// re-saving an earlier, edited step later reports this value instead of
+	// the step's own fixed number, which the backend would reject as going
+	// backwards.
+	recordApiStep: (step: number) => {
+		assessmentStore.setState((s) => ({
+			...s,
+			maxApiStep: Math.max(s.maxApiStep, step + 1),
 		}));
 	},
 	updateField: <K extends keyof AssessmentState>(

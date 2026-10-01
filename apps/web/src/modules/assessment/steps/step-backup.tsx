@@ -18,19 +18,22 @@ export default function StepBackup() {
 		mutationFn: async (selectedHours: number) => {
 			if (!sessionId) throw new Error("No session ID found");
 
+			const step = Math.max(4, assessmentStore.state.maxApiStep);
+
 			await saveAssessmentStep({
 				data: {
 					sessionId,
-					step: 4,
+					step,
 					data: { backupHours: selectedHours },
 				},
 			});
 
-			return selectedHours;
+			return { selectedHours, step };
 		},
-		onSuccess: (selectedHours) => {
+		onSuccess: ({ selectedHours, step }) => {
 			// Update the store with the number and advance
 			assessmentActions.updateField("backupHours", selectedHours);
+			assessmentActions.recordApiStep(step);
 			if (sessionId) {
 				queryClient.invalidateQueries({
 					queryKey: assessmentKeys.session(sessionId),
