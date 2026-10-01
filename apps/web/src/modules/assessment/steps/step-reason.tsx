@@ -19,21 +19,19 @@ export default function StepReason() {
 			if (!sessionId) throw new Error("No session ID found");
 
 			const selectedReason = REASONS.find((r) => r.id === selectedId);
-			const step = Math.max(2, assessmentStore.state.maxApiStep);
 
 			await saveAssessmentStep({
 				data: {
 					sessionId,
-					step,
+					step: 2,
 					data: { reason: selectedReason?.label || selectedId },
 				},
 			});
 
-			return { selectedId, step };
+			return selectedId;
 		},
-		onSuccess: ({ selectedId, step }) => {
+		onSuccess: (selectedId) => {
 			assessmentActions.updateField("reason", selectedId);
-			assessmentActions.recordApiStep(step);
 			if (sessionId) {
 				queryClient.invalidateQueries({
 					queryKey: assessmentKeys.session(sessionId),

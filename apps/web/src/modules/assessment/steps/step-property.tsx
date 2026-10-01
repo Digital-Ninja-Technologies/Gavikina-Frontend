@@ -23,21 +23,18 @@ export default function StepProperty() {
 				assessmentActions.setSessionId(currentSessionId);
 			}
 
-			const step = Math.max(1, assessmentStore.state.maxApiStep);
-
 			await saveAssessmentStep({
 				data: {
 					sessionId: currentSessionId,
-					step,
+					step: 1,
 					data: { propertyType: selectedId },
 				},
 			});
 
-			return { selectedId, step };
+			return selectedId;
 		},
-		onSuccess: ({ selectedId, step }) => {
+		onSuccess: (selectedId) => {
 			assessmentActions.updateField("property", selectedId);
-			assessmentActions.recordApiStep(step);
 			const currentSessionId = assessmentStore.state.sessionId;
 			if (currentSessionId) {
 				queryClient.invalidateQueries({

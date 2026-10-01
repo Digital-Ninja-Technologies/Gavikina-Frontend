@@ -27,13 +27,11 @@ export default function AssessmentFooter({
 }: AssessmentFooterProps) {
 	const uiStep = useSelector(assessmentStore, (s) => s.uiStep);
 	const sessionId = useSelector(assessmentStore, (s) => s.sessionId);
-	const maxApiStep = useSelector(assessmentStore, (s) => s.maxApiStep);
 	const queryClient = useQueryClient();
 
 	const stepMutation = useMutation({
 		mutationFn: saveAssessmentStep,
-		onSuccess: (_data, variables) => {
-			assessmentActions.recordApiStep(variables.data.step);
+		onSuccess: () => {
 			if (sessionId) {
 				queryClient.invalidateQueries({
 					queryKey: assessmentKeys.session(sessionId),
@@ -64,10 +62,7 @@ export default function AssessmentFooter({
 			stepMutation.mutate({
 				data: {
 					sessionId,
-					// Never ask the backend to go backwards — if this step was
-					// already passed and is now being re-saved after an edit,
-					// report at least the furthest step reached so far.
-					step: Math.max(apiStepNumber, maxApiStep),
+					step: apiStepNumber,
 					data: apiPayload,
 				},
 			});
