@@ -9,7 +9,7 @@ function AssessmentPage() {
 	return (
 		<div className="section-wrapper">
 			<span className="text-xs font-semibold uppercase tracking-widest text-green">
-				Full assessment
+				Power your home
 			</span>
 			<h1 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-navy sm:text-4xl lg:text-5xl leading-[1.2]">
 				Ten minutes for a real recommendation.
