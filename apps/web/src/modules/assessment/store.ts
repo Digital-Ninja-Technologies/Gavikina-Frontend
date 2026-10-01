@@ -62,12 +62,6 @@ export const assessmentActions = {
 			uiStep: Math.min(s.uiStep + 1, 8),
 		}));
 	},
-	prevStep: () => {
-		assessmentStore.setState((s) => ({
-			...s,
-			uiStep: Math.max(s.uiStep - 1, 0),
-		}));
-	},
 	updateField: <K extends keyof AssessmentState>(
 		field: K,
 		value: AssessmentState[K],
