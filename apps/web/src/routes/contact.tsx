@@ -73,7 +73,7 @@ function Contact() {
 				Contact
 			</span>
 			<h1 className="mt-2 text-3xl font-semibold tracking-tight text-navy sm:text-4xl lg:text-5xl">
-				Talk to an engineer.
+				Talk to our team.
 			</h1>
 
 			<div className="mt-10 grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
