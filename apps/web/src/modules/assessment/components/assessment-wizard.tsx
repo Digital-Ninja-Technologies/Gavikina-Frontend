@@ -1,7 +1,8 @@
 import { useSelector } from "@tanstack/react-store";
 import { Button } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
-import { Check } from "lucide-react";
+import { Check, MessageCircle } from "lucide-react";
+import { buildWhatsAppUrl } from "#/lib/whatsapp";
 import StepAppliances from "../steps/step-appliances";
 import StepBackup from "../steps/step-backup";
 import StepContact from "../steps/step-contact";
@@ -135,6 +136,30 @@ export default function AssessmentWizard() {
 							</strong>
 							Quote this ID if you contact us directly.
 						</div>
+
+						<div className="mt-4 w-full rounded-2xl border border-green/30 bg-green/5 p-4 sm:p-5">
+							<p className="text-xs leading-relaxed text-navy/70 sm:text-sm">
+								Contact us on WhatsApp now or wait till we reach out.
+							</p>
+							<Button
+								variant="primary"
+								size="sm"
+								className="mt-3 w-full sm:w-auto"
+								nativeButton={false}
+								render={
+									<a
+										href={buildWhatsAppUrl(
+											"Hi, I just submitted my solar assessment details and would like to speak with your team.",
+										)}
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								}
+							>
+								<MessageCircle className="size-4" /> Chat on WhatsApp
+							</Button>
+						</div>
+
 						<Button variant="outline" className="mt-6" onClick={restart}>
 							Run another assessment
 						</Button>
