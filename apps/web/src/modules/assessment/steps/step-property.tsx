@@ -63,7 +63,10 @@ export default function StepProperty() {
 	return (
 		<div className="flex h-full flex-col justify-between animate-gv-fade">
 			<div>
-				<h3 className="text-2xl font-semibold tracking-tight text-navy sm:text-3xl">
+				<span className="text-xs font-semibold uppercase tracking-widest text-green">
+					Power your own
+				</span>
+				<h3 className="mt-2 text-2xl font-semibold tracking-tight text-navy sm:text-3xl">
 					Is this for your home or office?
 				</h3>
 				<p className="mt-2 text-sm text-navy/70 sm:text-base">
