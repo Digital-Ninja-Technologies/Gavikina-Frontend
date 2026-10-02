@@ -319,7 +319,7 @@ function SolarCalculatorContent({
 						size="lg"
 						onClick={() => onAssessment?.(sel)}
 					>
-						Take the full assessment →
+						Free Online Energy Assessment →
 					</Button>
 					<Button
 						variant="outline-dark"

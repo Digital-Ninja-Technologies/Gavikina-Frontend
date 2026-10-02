@@ -164,7 +164,7 @@ function Home() {
                 onClick={() => openAssess()}
                 className="w-full sm:w-auto"
               >
-                Take the full assessment
+                Free Online Energy Assessment
               </Button>
             </div>
 
@@ -414,7 +414,7 @@ function Home() {
             className="w-full shrink-0 sm:w-auto"
             onClick={() => openAssess()}
           >
-            Start the full assessment
+            Free Online Energy Assessment
           </Button>
         </div>
       </section>

@@ -101,7 +101,7 @@ function HowItWorks() {
 					className="w-full shrink-0 sm:w-auto"
 					onClick={() => openAssess()}
 				>
-					Take the full assessment
+					Free Online Energy Assessment
 				</Button>
 			</div>
 		</div>

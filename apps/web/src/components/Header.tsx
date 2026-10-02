@@ -149,9 +149,9 @@ export default function Header() {
 							variant={"primary"}
 							size={isMobile ? "sm" : "lg"}
 							onClick={() => openAssess()}
-							className="px-3 text-xs sm:px-4 sm:text-sm"
+							className="px-2 text-[10px] sm:px-4 sm:text-sm"
 						>
-							Free Assessment
+							Free Online Energy Assessment
 						</Button>
 						<button
 							type="button"
