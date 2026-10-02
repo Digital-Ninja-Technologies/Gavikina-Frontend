@@ -163,18 +163,8 @@ function Home() {
               Power Your Own. Build Your Independence.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
-              Reliable solar and energy solutions engineered for{" "}
-              <strong className="font-bold text-green">Homes</strong>,{" "}
-              <strong className="font-bold text-green">SMEs</strong>,{" "}
-              <strong className="font-bold text-green">Businesses</strong>,{" "}
-              <strong className="font-bold text-green">
-                Commercial Organizations
-              </strong>
-              , and{" "}
-              <strong className="font-bold text-green">
-                Multi-Site Operations
-              </strong>{" "}
-              across Nigeria.
+              Reliable solar and energy solutions engineered for homes,
+              businesses and multi-site operations across Nigeria.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3 sm:flex-row sm:items-center">
@@ -282,7 +272,16 @@ function Home() {
             <span className="font-bold text-green">Power</span> your own
           </h2>
           <p className="section-description mx-auto mt-3">
-            for your home and office
+            for your <strong className="font-bold text-green">Home</strong>,{" "}
+            <strong className="font-bold text-green">SMEs</strong>,{" "}
+            <strong className="font-bold text-green">Business</strong>,{" "}
+            <strong className="font-bold text-green">
+              Commercial Organization
+            </strong>
+            , and{" "}
+            <strong className="font-bold text-green">
+              Multi-Site Operations
+            </strong>
           </p>
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
