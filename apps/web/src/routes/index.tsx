@@ -217,7 +217,7 @@ function Home() {
           <span aria-hidden="true" className="mr-2">
             🇳🇬
           </span>
-          600+ Installations — serving{" "}
+          600+ Installations, serving{" "}
           <span className="text-green">
             <RotatingEnding />
           </span>{" "}
