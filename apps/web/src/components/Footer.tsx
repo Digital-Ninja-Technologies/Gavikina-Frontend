@@ -17,11 +17,11 @@ export default function Footer() {
 							className="block h-9 w-auto"
 						/>
 						<p className="mt-4 max-w-sm text-sm leading-relaxed text-white/60">
-							Solar systems sized from a measured load, installed by our own
-							engineers, owned outright by you.
+							Reliable solar and energy solutions for homes, businesses and
+							multi-site operations across Nigeria.
 						</p>
 						<Button className="mt-6" size="sm" onClick={() => openAssess()}>
-							Free assessment
+							Free Online Energy Assessment
 						</Button>
 					</div>
 

@@ -14,9 +14,13 @@ import { cn } from "@workspace/ui/lib/utils"
 import {
   ArrowRight,
   Gauge,
+  Headset,
   type LucideIcon,
+  MapPinned,
+  PackageCheck,
   PiggyBank,
   ShieldCheck,
+  Wrench,
 } from "lucide-react"
 import {
   catalogueAppliancesQueryOptions,
@@ -69,11 +73,22 @@ const VALUE_PROPS: {
 
 const HERO_FACTS = [
   { value: "1.5–10kVA", label: "Five system tiers, sized from your real load" },
-  { value: "Free", label: "Site inspection before any quote is fixed" },
+  { value: "Free", label: "Online energy assessment before any quote" },
   {
     value: "One price",
     label: "Panels, inverter, batteries, install, commissioning",
   },
+]
+
+const CREDIBILITY_STATS: {
+  icon: LucideIcon
+  value: string
+  label: string
+}[] = [
+  { icon: Wrench, value: "600+", label: "Installations" },
+  { icon: MapPinned, value: "Nationwide", label: "Capability" },
+  { icon: PackageCheck, value: "End-to-End", label: "Delivery" },
+  { icon: Headset, value: "After-Sales", label: "Support" },
 ]
 
 const STEPS_SHORT = [
@@ -129,15 +144,14 @@ function Home() {
             </span>
             <h1
               className={
-                "mt-4 max-w-[16ch] font-heading text-[2.1875rem] leading-[1.01] font-semibold tracking-tight sm:text-4xl lg:text-6xl"
+                "mt-4 max-w-xl font-heading text-[2.1875rem] leading-[1.08] font-semibold tracking-tight sm:text-4xl lg:text-6xl"
               }
             >
-              Stop renting your power from a generator.
+              Power Your Own. Build Your Independence.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
-              We design, install and maintain solar systems sized to what you
-              actually run. Size yours in ninety seconds — no contact details
-              required.
+              Reliable solar and energy solutions engineered for homes,
+              businesses and multi-site operations across Nigeria.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3 sm:flex-row sm:items-center">
@@ -204,6 +218,31 @@ function Home() {
           </span>
           600+ Installations done <span className="text-green">nationwide</span>.
         </p>
+
+        <div className="section-wrapper py-0">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4 lg:grid-cols-4">
+            {CREDIBILITY_STATS.map((s) => {
+              const Icon = s.icon
+              return (
+                <div
+                  key={s.label}
+                  className="flex flex-col items-center gap-2 rounded-2xl border border-navy/10 bg-white px-4 py-6 text-center"
+                >
+                  <span className="flex size-10 items-center justify-center rounded-xl bg-green/10 text-green">
+                    <Icon className="size-5" />
+                  </span>
+                  <span className="text-base font-semibold text-navy sm:text-lg">
+                    {s.value}
+                  </span>
+                  <span className="text-xs font-medium tracking-wide text-navy/60 uppercase">
+                    {s.label}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
         <div className="mt-10">
           <InstallationsMarquee />
         </div>
@@ -364,9 +403,9 @@ function Home() {
               Ready for the number that comes with a plan?
             </h2>
             <p className="mt-3 max-w-xl text-base leading-relaxed text-white/70">
-              The full assessment adds your backup hours and fuel spend, then
-              gives you a personalised recommendation and a free site
-              inspection.
+              The free online assessment adds your backup hours and fuel
+              spend, then gives you a personalised recommendation and arranges
+              a site inspection.
             </p>
           </div>
           <Button

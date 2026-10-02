@@ -151,7 +151,7 @@ export default function Header() {
 							onClick={() => openAssess()}
 							className="px-3 text-xs sm:px-4 sm:text-sm"
 						>
-							Free assessment
+							Free Assessment
 						</Button>
 						<button
 							type="button"
@@ -209,7 +209,7 @@ export default function Header() {
 							Solar calculator
 						</Button>
 						<Button onClick={() => openAssess()} className="w-full">
-							Free assessment
+							Free Online Energy Assessment
 						</Button>
 					</div>
 				</div>
