@@ -204,7 +204,7 @@ function CatalogueTiersList() {
 
 					<div className="flex flex-col gap-2 sm:col-span-2 lg:col-span-1">
 						<Button size="lg" onClick={() => openAssess()}>
-							Free Online Energy Assessment
+							Free Energy Assessment
 						</Button>
 						<Button size="lg" variant="outline" onClick={openCalc}>
 							Check my load
