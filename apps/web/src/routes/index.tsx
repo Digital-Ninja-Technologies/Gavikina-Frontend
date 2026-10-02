@@ -272,7 +272,7 @@ function Home() {
             <span className="font-bold text-green">Power</span> your own
           </h2>
           <p className="section-description mx-auto mt-3">
-            for your <strong className="font-bold text-green">Home</strong>,{" "}
+            <strong className="font-bold text-green">Home</strong>,{" "}
             <strong className="font-bold text-green">SMEs</strong>,{" "}
             <strong className="font-bold text-green">Business</strong>,{" "}
             <strong className="font-bold text-green">
