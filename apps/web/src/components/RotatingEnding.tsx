@@ -9,7 +9,7 @@ const ENDINGS = [
 ];
 
 const HOLD_MS = 2000;
-const DROP_MS = 450;
+const DROP_MS = 360;
 
 export default function RotatingEnding() {
 	const [index, setIndex] = useState(0);
