@@ -49,7 +49,7 @@ export const NAV: NavGroup[] = [
 			},
 			{
 				path: "/assessment",
-				label: "Full assessment",
+				label: "Free Online Energy Assessment",
 				note: "Personalised recommendation",
 			},
 		],
@@ -88,7 +88,7 @@ export const FOOTER_COLS: { label: string; items: [string, string][] }[] = [
 		items: [
 			["/catalogue", "Product catalogue"],
 			["/calculator", "Solar calculator"],
-			["/assessment", "Full assessment"],
+			["/assessment", "Free Online Energy Assessment"],
 		],
 	},
 	{
