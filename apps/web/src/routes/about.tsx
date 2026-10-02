@@ -30,15 +30,16 @@ function About() {
 				About us
 			</span>
 			<h1 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-navy sm:text-4xl lg:text-5xl leading-[1.2]">
-				We build power you own outright.
+				We build energy you own outright.
 			</h1>
 
 			<div className="mt-10 grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
 				{/* Content & Principles */}
 				<div className="flex flex-col gap-6 text-sm leading-loose text-navy/70 sm:text-[15.5px] font-light">
 					<p>
-						Gavikina Energy installs solar systems for homes and businesses that
-						are tired of budgeting for fuel. We are engineers first: every
+						Gavikina Energy is the brand name for Gavikina Nigeria Limited. We
+						serve homes, businesses and multi-site operations across Nigeria
+						that are tired of budgeting for fuel. We are engineers first: every
 						system is sized from a measured load, not a sales target, and every
 						quote is confirmed on site before a panel is ordered.
 					</p>
