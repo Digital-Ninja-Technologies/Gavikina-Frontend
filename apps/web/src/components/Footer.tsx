@@ -47,10 +47,31 @@ export default function Footer() {
 				</div>
 
 				{/* Bottom Bar */}
-				<div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-					<span className="text-xs text-white/50">
-						© 2026 Gavikina Energy. Power Your Own.
-					</span>
+				<div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6">
+					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+						<div className="flex flex-col gap-1">
+							<span className="text-xs text-white/50">
+								© 2026 Gavikina Energy. Power Your Own.
+							</span>
+							<span className="text-[11px] text-white/35">
+								Gavikina Energy is a brand of Gavikina Nigeria Limited.
+							</span>
+						</div>
+						<div className="flex items-center gap-4">
+							<Link
+								to="/privacy"
+								className="text-xs text-white/50 transition-colors hover:text-white"
+							>
+								Privacy Policy
+							</Link>
+							<Link
+								to="/terms"
+								className="text-xs text-white/50 transition-colors hover:text-white"
+							>
+								Terms &amp; Conditions
+							</Link>
+						</div>
+					</div>
 					<span className="text-xs text-white/50">
 						Prices on this site are indicative ranges, confirmed after site
 						inspection.
