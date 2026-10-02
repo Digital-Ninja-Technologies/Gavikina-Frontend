@@ -166,9 +166,8 @@ export default function Header() {
 							variant={"primary"}
 							size={isMobile ? "sm" : "lg"}
 							onClick={() => openAssess()}
-							className="px-2 text-[10px] sm:px-4 sm:text-sm"
 						>
-							Free Online Energy Assessment
+							Free Energy Assessment
 						</Button>
 						<button
 							type="button"
@@ -235,7 +234,7 @@ export default function Header() {
 							Solar calculator
 						</Button>
 						<Button onClick={() => openAssess()} className="w-full">
-							Free Online Energy Assessment
+							Free Energy Assessment
 						</Button>
 					</div>
 				</div>
