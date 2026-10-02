@@ -73,7 +73,7 @@ export default function Header() {
 										<NavigationMenuItem key={group.key}>
 											<NavigationMenuTrigger
 												className={cn(
-													"bg-transparent text-[12px] font-medium text-navy transition-colors hover:bg-cream hover:text-navy focus:bg-cream focus:text-navy data-[state=open]:bg-cream",
+													"bg-transparent text-[14px] font-medium text-navy transition-colors hover:bg-cream hover:text-navy focus:bg-cream focus:text-navy data-[state=open]:bg-cream",
 													isGroupActive && "bg-cream text-navy",
 												)}
 											>
@@ -122,7 +122,7 @@ export default function Header() {
 												to="/agent"
 												className={cn(
 													navigationMenuTriggerStyle(),
-													"bg-transparent text-[12px] font-medium text-navy hover:bg-cream hover:text-navy focus:bg-cream focus:text-navy",
+													"bg-transparent text-[14px] font-medium text-navy hover:bg-cream hover:text-navy focus:bg-cream focus:text-navy",
 													isPathActive("/agent", pathname) && "bg-cream text-navy",
 												)}
 											/>
@@ -139,7 +139,7 @@ export default function Header() {
 												to="/contact"
 												className={cn(
 													navigationMenuTriggerStyle(),
-													"bg-transparent text-[12px] font-medium text-navy hover:bg-cream hover:text-navy focus:bg-cream focus:text-navy",
+													"bg-transparent text-[14px] font-medium text-navy hover:bg-cream hover:text-navy focus:bg-cream focus:text-navy",
 													isPathActive("/contact", pathname) &&
 														"bg-cream text-navy",
 												)}
