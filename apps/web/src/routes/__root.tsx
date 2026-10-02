@@ -20,6 +20,7 @@ import WelcomePopup from "../components/WelcomePopup";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import fontScaleCss from "../styles/font-scale.css?url";
 import marqueeCss from "../styles/marquee.css?url";
+import rotatingWordCss from "../styles/rotating-word.css?url";
 import "nprogress/nprogress.css";
 import { Button } from "@workspace/ui/components/button";
 import { AlertCircle } from "lucide-react";
@@ -69,6 +70,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{ rel: "stylesheet", href: appCss },
 			{ rel: "stylesheet", href: fontScaleCss },
 			{ rel: "stylesheet", href: marqueeCss },
+			{ rel: "stylesheet", href: rotatingWordCss },
 			{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
 			{
 				rel: "icon",

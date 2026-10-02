@@ -32,6 +32,7 @@ import { projectsQueryOptions } from "#/modules/projects/query-options"
 import { AsyncBoundary } from "../components/async-boundary"
 import ImageSlot from "../components/ImageSlot"
 import InstallationsMarquee from "../components/InstallationsMarquee"
+import RotatingEnding from "../components/RotatingEnding"
 import Reveal from "../components/Reveal"
 import { CASE_STUDY_PHOTO, HERO_SLOTS } from "../lib/content"
 import SolarCalculator from "../modules/calculator/components/SolarCalculator"
@@ -216,7 +217,11 @@ function Home() {
           <span aria-hidden="true" className="mr-2">
             🇳🇬
           </span>
-          600+ Installations done <span className="text-green">nationwide</span>.
+          600+ Installations done{" "}
+          <span className="text-green">
+            <RotatingEnding />
+          </span>
+          .
         </p>
 
         <div className="section-wrapper py-0">
