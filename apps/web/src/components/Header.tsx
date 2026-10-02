@@ -160,7 +160,7 @@ export default function Header() {
 							className="hidden lg:inline-flex"
 							onClick={openCalc}
 						>
-							Solar calculator
+							Energy Calculator
 						</Button>
 						<Button
 							variant={"primary"}
@@ -231,7 +231,7 @@ export default function Header() {
 					</div>
 					<div className="mt-6 flex flex-col gap-3">
 						<Button variant="outline" onClick={openCalc} className="w-full">
-							Solar calculator
+							Energy Calculator
 						</Button>
 						<Button onClick={() => openAssess()} className="w-full">
 							Free Assessment

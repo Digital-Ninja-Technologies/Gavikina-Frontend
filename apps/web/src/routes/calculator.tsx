@@ -10,7 +10,7 @@ function CalculatorPage() {
 	return (
 		<div className="section-wrapper">
 			<span className="text-xs font-semibold uppercase tracking-widest text-green">
-				Solar calculator
+				Energy Calculator
 			</span>
 			<h1 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-navy sm:text-4xl lg:text-5xl leading-[1.2]">
 				What size do you actually need?

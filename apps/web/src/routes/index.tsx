@@ -13,7 +13,10 @@ import { Skeleton } from "@workspace/ui/components/skeleton"
 import { cn } from "@workspace/ui/lib/utils"
 import {
   ArrowRight,
+  Calculator,
+  ClipboardCheck,
   Gauge,
+  HardHat,
   Headset,
   type LucideIcon,
   MapPinned,
@@ -92,24 +95,33 @@ const CREDIBILITY_STATS: {
   { icon: Headset, value: "After-Sales", label: "Support" },
 ]
 
-const STEPS_SHORT = [
+const STEPS_SHORT: {
+  num: string
+  icon: LucideIcon
+  title: string
+  body: string
+}[] = [
   {
     num: "01",
+    icon: Calculator,
     title: "Size it",
     body: "Use the calculator, or go straight to the full assessment.",
   },
   {
     num: "02",
+    icon: ClipboardCheck,
     title: "Inspect",
     body: "An engineer visits, measures the load and checks the roof.",
   },
   {
     num: "03",
+    icon: HardHat,
     title: "Install",
     body: "Mounting, wiring, protection and commissioning by our team.",
   },
   {
     num: "04",
+    icon: Headset,
     title: "Aftercare",
     body: "Warranty registered in your name, and we stay reachable.",
   },
@@ -291,7 +303,7 @@ function Home() {
           <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
             <div>
               <span className="text-xs font-semibold tracking-widest text-green uppercase">
-                Solar calculator
+                Energy Calculator
               </span>
               <h2 className="mt-2 max-w-lg text-2xl leading-[1.2] font-semibold tracking-tight text-navy sm:text-3xl lg:text-4xl">
                 Size your system without leaving this page.
@@ -368,9 +380,12 @@ function Home() {
                 index < 3 && "lg:border-r lg:border-navy/10"
               )}
             >
-              <span className="text-xs font-semibold tracking-widest text-amber">
-                {s.num}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold tracking-widest text-green">
+                  {s.num}
+                </span>
+                <s.icon className="size-4 text-green" />
+              </div>
               <h3 className="mt-2 text-base font-semibold text-navy">
                 {s.title}
               </h3>

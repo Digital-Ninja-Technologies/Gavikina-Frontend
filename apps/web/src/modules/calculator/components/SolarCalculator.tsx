@@ -130,9 +130,6 @@ function SolarCalculatorContent({
 					<h3 className="text-xl font-semibold tracking-tight text-navy sm:text-2xl">
 						What do you want to power?
 					</h3>
-					<span className="rounded-full bg-green/10 px-3 py-1 text-xs font-medium text-green">
-						No contact details needed
-					</span>
 				</div>
 				<p className="mb-6 max-w-xl text-sm leading-relaxed text-navy/70">
 					Pick your appliances and set the quantity. We size the system from the
