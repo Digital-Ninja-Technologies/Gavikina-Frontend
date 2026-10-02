@@ -23,6 +23,12 @@ export default function Footer() {
 						<Button className="mt-6" size="sm" onClick={() => openAssess()}>
 							Free Online Energy Assessment
 						</Button>
+						<Link
+							to="/agent"
+							className="mt-4 block text-sm font-semibold text-white transition-colors hover:text-white/80"
+						>
+							Become an agent →
+						</Link>
 					</div>
 
 					{/* Navigation Columns */}

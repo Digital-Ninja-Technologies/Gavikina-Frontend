@@ -119,6 +119,23 @@ export default function Header() {
 									<NavigationMenuLink
 										render={
 											<Link
+												to="/agent"
+												className={cn(
+													navigationMenuTriggerStyle(),
+													"bg-transparent text-sm font-medium text-navy hover:bg-cream hover:text-navy focus:bg-cream focus:text-navy",
+													isPathActive("/agent", pathname) && "bg-cream text-navy",
+												)}
+											/>
+										}
+									>
+										Become an agent
+									</NavigationMenuLink>
+								</NavigationMenuItem>
+
+								<NavigationMenuItem>
+									<NavigationMenuLink
+										render={
+											<Link
 												to="/contact"
 												className={cn(
 													navigationMenuTriggerStyle(),
@@ -194,6 +211,15 @@ export default function Header() {
 						</div>
 					))}
 					<div className="mt-4">
+						<Link
+							to="/agent"
+							className={cn(
+								"flex w-full border-b border-navy/10 py-3 text-left text-sm font-medium text-navy",
+								isPathActive("/agent", pathname) && "bg-cream text-navy",
+							)}
+						>
+							Become an agent
+						</Link>
 						<Link
 							to="/contact"
 							className={cn(

@@ -58,11 +58,6 @@ export const NAV: NavGroup[] = [
 		key: "opportunities",
 		label: "Opportunities",
 		items: [
-			{
-				path: "/agent",
-				label: "Become an agent",
-				note: "Earn on introductions",
-			},
 			{ path: "/careers", label: "Careers", note: "Open roles" },
 			{
 				path: "/investors",
@@ -94,7 +89,6 @@ export const FOOTER_COLS: { label: string; items: [string, string][] }[] = [
 	{
 		label: "Opportunities",
 		items: [
-			["/agent", "Become an agent"],
 			["/careers", "Careers"],
 			["/investors", "Investors guide"],
 			["/contact", "Contact"],
