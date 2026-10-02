@@ -163,8 +163,18 @@ function Home() {
               Power Your Own. Build Your Independence.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
-              Reliable solar and energy solutions engineered for homes,
-              businesses and multi-site operations across Nigeria.
+              Reliable solar and energy solutions engineered for{" "}
+              <strong className="font-bold text-green">Homes</strong>,{" "}
+              <strong className="font-bold text-green">SMEs</strong>,{" "}
+              <strong className="font-bold text-green">Businesses</strong>,{" "}
+              <strong className="font-bold text-green">
+                Commercial Organizations
+              </strong>
+              , and{" "}
+              <strong className="font-bold text-green">
+                Multi-Site Operations
+              </strong>{" "}
+              across Nigeria.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3 sm:flex-row sm:items-center">
