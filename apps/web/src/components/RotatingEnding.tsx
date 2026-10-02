@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
 const ENDINGS = [
-	"For SMEs",
-	"For Business",
-	"For Homes",
-	"For Commercial Organizations",
-	"In Multiple Locations",
+	"SMEs",
+	"Businesses",
+	"Homes",
+	"Commercial Organizations",
+	"Multiple Locations",
 ];
 
 const HOLD_MS = 2000;

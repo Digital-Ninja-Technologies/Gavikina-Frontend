@@ -217,11 +217,11 @@ function Home() {
           <span aria-hidden="true" className="mr-2">
             🇳🇬
           </span>
-          600+ Installations done{" "}
+          600+ Installations — serving{" "}
           <span className="text-green">
             <RotatingEnding />
-          </span>
-          .
+          </span>{" "}
+          nationwide.
         </p>
 
         <div className="section-wrapper py-0">
